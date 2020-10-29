@@ -44,7 +44,6 @@
 (after! python
         (setq flycheck-checker 'python-flake8)
 )
-;; with no apple keyboard remap meta
 (setq x-super-keysym 'meta)
 
 (defun myownfunction ()
@@ -111,11 +110,11 @@
 ;;   `require' or `use-package'.
 ;; - `map!' for binding new keys
 ;
-(map! :after python
-        :localleader
-        :map python-mode-map
-        :prefix ("t" . "test")
-        "a" #'python-pytest)
+;;(map! :after python
+;;        :localleader
+;;        :map python-mode-map
+;;        :prefix ("t" . "test")
+;;        "a" #'python-pytest)
 ;
 ;(map! after pytest
 ;);
