@@ -3,7 +3,19 @@
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
 
-
+;;(setq org-agenda-custom-commands
+;;      (vconcat 'org-agenda-custom-commands
+;;      '(("ho" agenda)
+;;        ("hk" tags "+home+Kim"))))
+;;(after! org (setq  org-agenda-custom-commands (append org-agenda-custom-commands
+;;      '(("ho" agenda)
+;;        ("hk" tags "+home+Kim")))))
+(after! org-agenda (setq  org-agenda-custom-commands (append org-agenda-custom-commands
+        '(("hl" "Agenda and all TODOs"
+        ((agenda "")
+        (alltodo "")))
+        ("ho" agenda)
+        ("hk" tags "+home+Kim")))))
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
 (setq user-full-name "David H"
