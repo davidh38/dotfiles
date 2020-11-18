@@ -3,21 +3,50 @@
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
 
-;;(setq org-agenda-custom-commands
-;;      (vconcat 'org-agenda-custom-commands
-;;      '(("ho" agenda)
-;;        ("hk" tags "+home+Kim"))))
-;;(after! org (setq  org-agenda-custom-commands (append org-agenda-custom-commands
-;;      '(("ho" agenda)
-;;        ("hk" tags "+home+Kim")))))
+;;(require 'dap-python)
+;;(add-to-list 'doom-autoloads-files (concat doom-private-dir "some-other-file.el"))
+;;(require 'dap-python)
+
+(after! dap-mode
+(setq dap-python-executable "python3")
+(dap-register-debug-template "My App"
+  (list :type "python"
+        :cwd "/home/dave/PythonProjects/triangulation-2"
+        :target-module (expand-file-name "../src/Main.py")
+        :request "launch"
+        :name "My App"))
+(dap-register-debug-template "Triangulation"
+  (list :type "python"
+        :cwd "/home/dave/PythonProjects/triangulation-2/"
+        :target-module "./src/Main.py"
+        :request "launch"
+        :name "My App2"))
+
+)
+
 (after! org-agenda (setq  org-agenda-custom-commands (append org-agenda-custom-commands
-        '(("hl" "Agenda and all TODOs"
-        ((agenda "")
-        (alltodo "")))
-        ("ho" agenda)
-        ("hk" tags "+home+Kim")))))
+        '(
+        ("w" "work todos"
+                (
+                        (agenda "")
+                        (tags-todo "-personal")
+                )
+
+                )
+
+;;        ("hl" "Calendar" agenda ""
+;;         ((org-agenda-span 4)                          ;; [1]
+;;          (org-agenda-start-on-weekday 0)               ;; [2]
+;;          (org-agenda-time-grid nil)
+;;          (org-agenda-repeating-timestamp-show-all t)   ;; [3]
+;;          (org-agenda-entry-types '(:timestamp :sexp))))  ;; [4]
+;;      ;; other commands go here
+;;        ("ho" agenda)
+;;        ("hk" tags "+home+Kim")
+        ))))
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
+;;
 (setq user-full-name "David H"
       user-mail-address "john@doe.com")
 
@@ -114,7 +143,8 @@
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;evil-tutor
 ;;
-
+(global-display-line-numbers-mode)
+(setq display-line-numbers-type 'relative)
 ;(use-package! '('org-drill'))
 ;; - `load!' for loading external *.el files relative to this one
 ;; - `use-package!' for configuring packages
@@ -124,14 +154,6 @@
 ;;   `require' or `use-package'.
 ;; - `map!' for binding new keys
 ;
-;;(map! :after python
-;;        :localleader
-;;        :map python-mode-map
-;;        :prefix ("t" . "test")
-;;        "a" #'python-pytest)
-;
-;(map! after pytest
-;);
 ;; To get information about any of these functions/macros, move the cursor over
 ;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
 ;; This will open documentation for it, including demos of how they are used.

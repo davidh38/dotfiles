@@ -29,7 +29,8 @@
 ;(package! builtin-package :disable t)
 (package! evil-tutor)
 (package! realgud-ipdb)
-
+(package! request)
+;;(package! dap-mode)
 ;; You can override the recipe of a built in package without having to specify
 ;; all the properties for `:recipe'. These will inherit the rest of its recipe
 ;; from Doom or MELPA/ELPA/Emacsmirror:
