@@ -68,7 +68,7 @@
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-one)
-(setq lsp-python-ms-extra-paths ["." ".." "/home/dave/PythonProjects/MyProject/src/" "/home/dave/PythonProjects/MyProject/" "src/"])
+;; (setq lsp-python-ms-extra-paths ["." ".." "/home/dave/PythonProjects/MyProject/src/" "/home/dave/PythonProjects/MyProject/" "src/"])
 
 (setq lsp-python-ms-python-executable-cmd "python3")
 
@@ -77,8 +77,10 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org/")
-(setq org-agenda-files '("~/Dropbox/org/"))
+(setq org-directory "~/Dropbox/org/")
+(setq org-agenda-files "~/Dropbox/org/")
+(setq org-mobile-inbox-for-pull "~/Dropbox/org/flagged.org")
+(setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
 ;;(setq org-image-actual-width 800)
 
 ;; not working
