@@ -33,6 +33,20 @@
                 )
 
                 )
+        ("p" "personal todos"
+                (
+                        (agenda "")
+                        (tags-todo "personal")
+                )
+
+                )
+        ("h" "household"
+                (
+                        (agenda "")
+                        (tags-todo "household")
+                )
+
+                )
 
 ;;        ("hl" "Calendar" agenda ""
 ;;         ((org-agenda-span 4)                          ;; [1]

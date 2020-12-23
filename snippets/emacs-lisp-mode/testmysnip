@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: testmysnip
-# key: testmysnip
+# key: a
 # --
 
-(yes-or-no-p "$1")
+(what-or-no-p "$1")
