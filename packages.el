@@ -27,6 +27,7 @@
 ;; If you'd like to disable a package included with Doom, you can do so here
 ;; with the `:disable' property:
 ;(package! builtin-package :disable t)
+(package! anki-editor)
 (package! evil-tutor)
 (package! realgud-ipdb)
 (package! request)

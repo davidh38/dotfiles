@@ -23,13 +23,24 @@
         :name "My App2"))
 
 )
+(setq deft-directory "~/Dropbox/org"
+      deft-extensions '("org" "txt")
+      deft-recursive t)
 
-(after! org-agenda (setq  org-agenda-custom-commands (append org-agenda-custom-commands
+(setq org-roam-directory "~/Dropbox/org/roam")
+
+(after! org-agenda
+  (setq org-agenda-clockreport-parameter-plist
+        '(:link t :maxlevel 3)
+        )
+  (setq  org-agenda-custom-commands
+         (append org-agenda-custom-commands
         '(
         ("w" "work todos"
                 (
                         (agenda "")
-                        (tags-todo "-personal")
+                        (tags-todo "work")
+                        ;(tags-todo "-personal")
                 )
 
                 )
@@ -40,6 +51,7 @@
                 )
 
                 )
+
         ("h" "household"
                 (
                         (agenda "")
@@ -176,3 +188,18 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
+;; example configuration for mu4e
+;;
+;; if you installed it using your package manager
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+
+;; Each path is relative to `+mu4e-mu4e-mail-path', which is ~/.mail by default
+(set-email-account! "web.de"
+  '((mu4e-sent-folder       . "/web.de/Sent Mail")
+    (mu4e-drafts-folder     . "/web.de/Drafts")
+    (mu4e-trash-folder      . "/web.de/Trash")
+    (mu4e-refile-folder     . "/web.de/All Mail")
+    (smtpmail-smtp-user     . "lifeainteasy@web.de")
+    (user-mail-address      . "lifeainteasy@web.de")    ;; only needed for mu < 1.4
+    (mu4e-compose-signature . "---\nDavid H"))
+  t)
