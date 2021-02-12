@@ -31,6 +31,8 @@
 (package! evil-tutor)
 (package! realgud-ipdb)
 (package! request)
+;(require 'epa-file)
+;(epa-file-enable)
 ;;(package! dap-mode)
 ;; You can override the recipe of a built in package without having to specify
 ;; all the properties for `:recipe'. These will inherit the rest of its recipe

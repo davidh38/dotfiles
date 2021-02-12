@@ -31,7 +31,8 @@
 
 (after! org-agenda
   (setq org-agenda-clockreport-parameter-plist
-        '(:link t :maxlevel 3)
+;'(:scope file :maxlevel 3 :link t :properties ("Effort") :formula "$5='(- $1 $4);U::@1$1=string(\"Effort\")::@1$3=string(\"Total\")::@1$4=string(\"Task time\")" :formatter my-clocktable-write)
+        '(:maxlevel 3 :properties ("Effort") :fileskip0 t :formatter my-clocktable-write :formula "$7='(- $2 $4);U::$8='(- $2 $5);U::$9='(- $2 $6);U" )
         )
   (setq  org-agenda-custom-commands
          (append org-agenda-custom-commands
@@ -56,6 +57,14 @@
                 (
                         (agenda "")
                         (tags-todo "household")
+                )
+
+                )
+      ("i" "inbox todos"
+                (
+                        (agenda "")
+                        (tags-todo "inbox")
+                        ;(tags-todo "-personal")
                 )
 
                 )
@@ -115,6 +124,26 @@
 )
 (setq x-super-keysym 'meta)
 
+
+;; Format org-mode clocktables the way we want to include Effort
+;; In the clocktable header:
+;; :formatter my/clocktable-write
+(defun my-clocktable-write (&rest args)
+  "Custom clocktable writer.
+Uses the default writer but shifts the first column right 3 columns,
+;and names the estimation error column."
+  (apply #'org-clocktable-write-default args)
+  (save-excursion
+    (forward-char) ;; move into the first table field
+    (org-table-next-field)
+    (org-table-move-column-right)
+    (org-table-move-column-right)
+    (org-table-move-column-right)
+    (org-table-move-column-right)
+    (org-table-next-field)
+    (org-table-previous-field)))
+
+;
 (defun myownfunction ()
        (interactive)
        (insert "hello fab")
@@ -155,6 +184,9 @@
 
 
 (after! org
+  (pushnew! org-modules 'org-habit)
+;  (add-to-list 'org-modules 'org-checklist 'org-habit)
+;  (setq org-habit-show-habits t)
   (setq org-image-actual-width 800)
   (setq
    org-lowest-priority ?D
