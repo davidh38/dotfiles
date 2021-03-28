@@ -29,6 +29,10 @@
 
 (setq org-roam-directory "~/Dropbox/org/roam")
 
+(add-hook 'org-mode-hook (lambda () (writeroom-mode +1)))
+(add-hook 'org-agenda-mode-hook (lambda () (writeroom-mode +1)))
+
+
 (after! org-agenda
   (setq org-agenda-clockreport-parameter-plist
 ;'(:scope file :maxlevel 3 :link t :properties ("Effort") :formula "$5='(- $1 $4);U::@1$1=string(\"Effort\")::@1$3=string(\"Total\")::@1$4=string(\"Task time\")" :formatter my-clocktable-write)
