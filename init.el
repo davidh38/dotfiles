@@ -35,7 +35,7 @@
        ;;hydra
        indent-guides     ; highlighted indent columns
        ;;ligatures         ; ligatures and symbols to make your code pretty again
-       ;;minimap           ; show a map of the code on the side
+       minimap           ; show a map of the code on the side
        modeline          ; snazzy, Atom-inspired modeline, plus API
        ;;nav-flash         ; blink cursor line after big motions
        neotree           ; a project drawer, like NERDTree for vim
@@ -50,7 +50,7 @@
        workspaces        ; tab emulation, persistence & separate workspaces
        zen               ; distraction-free coding or writing
 
-       :editor
+       :editor format
        (evil +everywhere); come to the dark side, we have cookies
        file-templates    ; auto-snippets for empty files
        fold              ; (nigh) universal code folding
@@ -89,7 +89,7 @@ t       ;;multiple-cursors  ; editing in many places at once
        ;;direnv
        ;;docker
        ;;editorconfig      ; let someone else argue about tabs vs spaces
-       ;;ein               ; tame Jupyter notebooks with emacs
+       ein               ; tame Jupyter notebooks with emacs
        (eval +overlay)     ; run code, run (also, repls)
        ;;gist              ; interacting with github gists
        lookup              ; navigate your code and its documentation
@@ -148,7 +148,7 @@ t       ;;multiple-cursors  ; editing in many places at once
        ;;ocaml             ; an objective camel
        (org +dragndrop +hugo +jupyter +roam +gnuplot)              ; organize your plain life in plain text
        ;;php               ; perl's insecure younger brother
-       plantuml          ; diagrams for confusing people more
+       plantuml            ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
        (python +lsp +pyright)            ; beautiful is better than ugly
        ;;qt                ; the 'cutest' gui framework ever
@@ -174,7 +174,7 @@ t       ;;multiple-cursors  ; editing in many places at once
        ;;(wanderlust +gmail)
 
        :app
-       ;;calendar
+       calendar
        irc               ; how neckbeards socialize
        ;;(rss +org)        ; emacs as an RSS reader
        ;;twitter           ; twitter client https://twitter.com/vnought

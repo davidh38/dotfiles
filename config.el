@@ -29,14 +29,16 @@
 
 (setq org-roam-directory "~/Dropbox/org/roam")
 
-(add-hook 'org-mode-hook (lambda () (writeroom-mode +1)))
-(add-hook 'org-agenda-mode-hook (lambda () (writeroom-mode +1)))
-
+;(add-hook 'org-mode-hook (lambda () (writeroom-mode 1)))
+;(add-hook 'org-agenda-mode-hook (lambda () (writeroom-mode 1)))
 
 (after! org-agenda
+        (writeroom-mode 1)
   (setq org-agenda-clockreport-parameter-plist
 ;'(:scope file :maxlevel 3 :link t :properties ("Effort") :formula "$5='(- $1 $4);U::@1$1=string(\"Effort\")::@1$3=string(\"Total\")::@1$4=string(\"Task time\")" :formatter my-clocktable-write)
-        '(:maxlevel 3 :properties ("Effort") :fileskip0 t :formatter my-clocktable-write :formula "$7='(- $2 $4);U::$8='(- $2 $5);U::$9='(- $2 $6);U" )
+        ;'(:maxlevel 3) :properties ("Effort") :fileskip0 t :formatter my-clocktable-write :formula "$7='(- $2 $4);U::$8='(- $2 $5);U::$9='(- $2 $6);U" )
+        '(:maxlevel 4 ;:properties ("Effort") :fileskip0 t :formatter my-clocktable-write :formula "$9='(- $3 $5);U::$10='(- $2 $6);U::$11='(- $2 $7);U::$12='(- $3 $8);U"
+                      )
         )
   (setq  org-agenda-custom-commands
          (append org-agenda-custom-commands
@@ -147,14 +149,32 @@ Uses the default writer but shifts the first column right 3 columns,
     (org-table-next-field)
     (org-table-previous-field)))
 
-;
-(defun myownfunction ()
+(map! :leader
+(:prefix-map ("m" . "applications")
+        (:prefix ("w" . "journal")
+        :desc "Next parent buffer" "v" #'my-next-upper-heading
+        :desc "nothing interesting yet" "s" #'org-journal-search)))
+
+(defun myownfunction (test)
        (interactive)
        (insert "hello fab")
        (insert "hello fab1")
        (insert "hello fab2")
        (insert "hello fab3")
 
+)
+
+(defun my-next-upper-heading ()
+       (interactive)
+       (outline-up-heading 1)
+       (org-forward-heading-same-level 1)
+    )
+
+(defun myfac (n)
+       (interactive)
+    (if (< 0 n)
+      (* n (fac (1- n)))
+      1)
 )
 ;;(setq org-superstar-item-bullet-alist
 ;;  '((?* . ?⌬)
@@ -184,7 +204,7 @@ Uses the default writer but shifts the first column right 3 columns,
 ;        :desc "Search journal entry" "s" #'org-journal-search)))
 
 
-(setq org-plantuml-jar-path "/opt/plantuml/plantuml.jar")
+;(setq org-plantuml-jar-path "/opt/plantuml/plantuml.jar")
 
 
 (after! org
@@ -201,14 +221,14 @@ Uses the default writer but shifts the first column right 3 columns,
 )
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type t)
 
+(setq display-line-numbers-type t)
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;evil-tutor
 ;;
 (global-display-line-numbers-mode)
-(setq display-line-numbers-type 'relative)
+;(setq display-line-numbers-type 'relative)
 ;(use-package! '('org-drill'))
 ;; - `load!' for loading external *.el files relative to this one
 ;; - `use-package!' for configuring packages

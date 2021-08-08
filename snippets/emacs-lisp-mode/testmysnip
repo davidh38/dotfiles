@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: testmysnip
-# key: a
-# --
-
-(what-or-no-p "$1")
