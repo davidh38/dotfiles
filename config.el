@@ -1,11 +1,28 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
+;;; rg
+;;;
 
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
 
+(require 'org-timer)
+(require 'org-clock)
+(require 'ox-html)
 ;;(require 'dap-python)
 ;;(add-to-list 'doom-autoloads-files (concat doom-private-dir "some-other-file.el"))
 ;;(require 'dap-python)
+;;; To save the clock history across Emacs sessions, use
+;;;
+(after! org-clock
+  (setq org-clock-history-length 20))
+(if (file-exists-p org-clock-persist-file)
+    ;; (setq org-clock-persist 'history)
+    (org-clock-persistence-insinuate)
+  (shell-command (concat "touch " org-clock-persist-file)))
+
+(add-to-list 'auto-mode-alist '("\\.dat\\'" . ledger-mode))
+
+(require 'org-gcal)
 
 (after! dap-mode
 (setq dap-python-executable "python3")
@@ -23,18 +40,30 @@
         :name "My App2"))
 
 )
-(setq deft-directory "~/Dropbox/org"
+(setq deft-directory "~/Dropbox/org1"
       deft-extensions '("org" "txt")
       deft-recursive t)
 
-(setq org-roam-directory "~/Dropbox/org/roam")
+(setq org-roam-directory "~/Dropbox/org1/roam")
 
 ;(add-hook 'org-mode-hook (lambda () (writeroom-mode 1)))
-;(add-hook 'org-agenda-mode-hook (lambda () (writeroom-mode 1)))
+;(global-writeroom-mode 1)
+;(setq my-whiteroom 0)
+;(add-hook 'org-agenda-mode
+;        (lambda ()
+;          (when (eq my-whiteroom 0)
+;          (setq my-whiteroom 1)
+;          (writeroom-mode 1)
+;          )
+;        )
+;)
 
 (after! org-agenda
-        (writeroom-mode 1)
-  (setq org-agenda-clockreport-parameter-plist
+        ;(lambda () (writeroom-mode 1)))
+        (setq org-tags-exclude-from-inheritance '("time_booking"))
+        (setq org-agenda-start-on-weekday 1)         ;; calendar begins today
+        (setq org-agenda-start-day "1d")
+        (setq org-agenda-clockreport-parameter-plist
 ;'(:scope file :maxlevel 3 :link t :properties ("Effort") :formula "$5='(- $1 $4);U::@1$1=string(\"Effort\")::@1$3=string(\"Total\")::@1$4=string(\"Task time\")" :formatter my-clocktable-write)
         ;'(:maxlevel 3) :properties ("Effort") :fileskip0 t :formatter my-clocktable-write :formula "$7='(- $2 $4);U::$8='(- $2 $5);U::$9='(- $2 $6);U" )
         '(:maxlevel 4 ;:properties ("Effort") :fileskip0 t :formatter my-clocktable-write :formula "$9='(- $3 $5);U::$10='(- $2 $6);U::$11='(- $2 $7);U::$12='(- $3 $8);U"
@@ -45,7 +74,9 @@
         '(
         ("w" "work todos"
                 (
-                        (agenda "")
+                 (agenda ""
+
+                         )
                         (tags-todo "work")
                         ;(tags-todo "-personal")
                 )
@@ -68,21 +99,27 @@
                 )
       ("i" "inbox todos"
                 (
-                        (agenda "")
-                        (tags-todo "inbox")
-                        ;(tags-todo "-personal")
+                 (agenda ""
+                ((org-agenda-span 7)                      ;; overview of appointments
+                (calendar-week-start-day 0)
+                      (org-agenda-start-on-weekday 1)         ;; calendar begins today
+                                              )
+
+                )                        (tags-todo "inbox")
+                                        ;(tags-todo "-personal")
                 )
 
                 )
 
-;;        ("hl" "Calendar" agenda ""
-;;         ((org-agenda-span 4)                          ;; [1]
-;;          (org-agenda-start-on-weekday 0)               ;; [2]
-;;          (org-agenda-time-grid nil)
-;;          (org-agenda-repeating-timestamp-show-all t)   ;; [3]
-;;          (org-agenda-entry-types '(:timestamp :sexp))))  ;; [4]
-;;      ;; other commands go here
-;;        ("ho" agenda)
+
+;       ("hl" "Calendar" agenda ""
+;         ((org-agenda-span 4)                          ;; [1]
+;          (org-agenda-start-on-weekday 0)               ;; [2]
+;          (org-agenda-time-grid nil)
+;          (org-agenda-repeating-timestamp-show-all t)   ;; [3]
+;          (org-agenda-entry-types '(:timestamp :sexp))))  ;; [4]
+;      ;; other commands go here
+;        ("ho" agenda)
 ;;        ("hk" tags "+home+Kim")
         ))))
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
@@ -118,9 +155,9 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/Dropbox/org/")
-(setq org-agenda-files "~/Dropbox/org/")
-(setq org-mobile-inbox-for-pull "~/Dropbox/org/flagged.org")
+(setq org-directory "~/Dropbox/org1/")
+(setq org-agenda-files "~/Dropbox/org1/")
+(setq org-mobile-inbox-for-pull "~/Dropbox/org1/flagged.org")
 (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
 ;;(setq org-image-actual-width 800)
 
@@ -148,6 +185,8 @@ Uses the default writer but shifts the first column right 3 columns,
     (org-table-move-column-right)
     (org-table-next-field)
     (org-table-previous-field)))
+
+(map! :after buffer "e" #'ediff-current-file)
 
 (map! :leader
 (:prefix-map ("m" . "applications")
@@ -250,12 +289,3 @@ Uses the default writer but shifts the first column right 3 columns,
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
 
 ;; Each path is relative to `+mu4e-mu4e-mail-path', which is ~/.mail by default
-(set-email-account! "web.de"
-  '((mu4e-sent-folder       . "/web.de/Sent Mail")
-    (mu4e-drafts-folder     . "/web.de/Drafts")
-    (mu4e-trash-folder      . "/web.de/Trash")
-    (mu4e-refile-folder     . "/web.de/All Mail")
-    (smtpmail-smtp-user     . "lifeainteasy@web.de")
-    (user-mail-address      . "lifeainteasy@web.de")    ;; only needed for mu < 1.4
-    (mu4e-compose-signature . "---\nDavid H"))
-  t)
