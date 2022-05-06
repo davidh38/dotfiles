@@ -9,7 +9,7 @@
      ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
      ("account" "%(binary) -f %(ledger-file) reg %(account)")))
         '(org-agenda-files
-        '("/home/dave/Dropbox/org/notebook.org" "/home/dave/Dropbox/org1/schedule.org" "/home/dave/Dropbox/org1/schedule.org_archive" "/home/dave/Dropbox/org1/birthdays.org" "/home/dave/Dropbox/org1/mypdf.org" "/home/dave/Dropbox/org1/priv.org" "/home/dave/Dropbox/org1/test.org" "/home/dave/Dropbox/org1/events.org"))
+        '("/home/dave/Dropbox/org/notebook.org" "/home/dave/Dropbox/org1/schedule.org" "/home/dave/Dropbox/org1/schedule.org_archive" "/home/dave/Dropbox/org1/birthdays.org" "/home/dave/Dropbox/org1/mypdf.org" "/home/dave/Dropbox/org1/priv.org" "/home/dave/Dropbox/org1/test.org" "/home/dave/Dropbox/org1/events.org" "/home/dave/Dropbox/org1/work.org"))
  '(package-selected-packages '(request)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
