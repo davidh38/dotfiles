@@ -5,56 +5,22 @@
 (package-initialize)
 (package-refresh-contents)
 
-;; *** Org mode ***
-;; deletes super ugly dots at the start of a bullet
-;; https://www.reddit.com/r/spacemacs/comments/hrdj0x/dots_appearing_in_orgmode_bullet_lists/
-(setq org-hide-leading-stars nil) ;; ugly dots
-(setq org-superstar-leading-bullet ?\s) ;; ogly dots
-(require 'org-superstar)
-(add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
 
-(setq org-agenda-files (list "~/test"))
+;; Download Evil
+(unless (package-installed-p 'evil)
+  (package-install 'evil))
 
-(global-set-key (kbd "C-c l") #'org-store-link)
-(global-set-key (kbd "C-c a") #'org-agenda)
-(global-set-key (kbd "C-c c") #'org-capture)
+;; needs to be before require evil
+(setq evil-want-C-u-scroll t) ;; scroll with C-u
+(setq evil-want-C-i-jump nil) ;; tab in org mode
+;; Enable Evil
+(require 'evil)
+(evil-mode 1)
 
-;; *** Ivy mode ***
-(ivy-mode 1)
-(use-package ivy :demand
-      :config
-      (setq ivy-use-virtual-buffers t
-            ivy-count-format "%d/%d "))
-(ivy-mode)
-(setq ivy-use-virtual-buffers t)
-(setq enable-recursive-minibuffers t)
-;;enable this if you want `swiper' to use it
-(setq search-default-mode #'char-fold-to-regexp)
-(global-set-key "\C-s" 'swiper)
-(global-set-key (kbd "C-c C-r") 'ivy-resume)
-(global-set-key (kbd "<f6>") 'ivy-resume)
-(global-set-key (kbd "M-x") 'counsel-M-x)
-(global-set-key (kbd "C-x C-f") 'counsel-find-file)
-(global-set-key (kbd "<f1> f") 'counsel-describe-function)
-(global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-(global-set-key (kbd "<f1> o") 'counsel-describe-symbol)
-(global-set-key (kbd "<f1> l") 'counsel-find-library)
-(global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
-(global-set-key (kbd "<f2> u") 'counsel-unicode-char)
-(global-set-key (kbd "C-c g") 'counsel-git)
-(global-set-key (kbd "C-c j") 'counsel-git-grep)
-(global-set-key (kbd "C-c k") 'counsel-ag)
-(global-set-key (kbd "C-x l") 'counsel-locate)
-(global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
-(define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
-;;(global-set-key "\C-x\ \C-r" 'counsel-recentf)
-
-;; *** Which key ***
 ;; shows shortcuts, when clicking C-x
 (add-to-list 'load-path "/Users/dave/.emacs.d/elpa/which-key-20220811.1616/which-key.el")
-(require 'which-key)
+;(require 'which-key)
 (which-key-mode)
-;; https://github.com/doomemacs/doomemacs/blob/master/modules/config/default/+evil-bindings.el
 
 ;  (:prefix-map ("f" . "file")
 ;       :desc "Open project editorconfig"   "c"   #'editorconfig-find-current-editorconfig
@@ -77,17 +43,21 @@
 ;       :desc "Yank file path"              "y"   #'+default/yank-buffer-path
 ;       :desc "Yank file path from project" "Y"   #'+default/yank-buffer-path-relative-to-project)
 
-(setq file-map (make-sparse-keymap))
-(define-key file-map "s" '("Save file" . save-buffer))
-(define-key file-map "r" '("Open Recent files" . counsel-recentf))
-(define-key file-map "f" '("find file" . counsel-find-file))
-(define-key file-map "b" '("bar-prefix" . (keymap)))
-(setq my-map (make-sparse-keymap))
-(define-key my-map "f" (cons "files" file-map))
-;;(define-key evil-normal-state-map (kbd "SPC") my-map)
-(global-set-key (kbd "C-c") my-map)
 
-;; *** Theme ***
+(setq some-map (make-sparse-keymap))
+(define-key some-map "r" '("Open Recent files" . counsel-recentf))
+(define-key some-map "b" '("bar-prefix" . (keymap)))
+(setq my-map (make-sparse-keymap))
+(define-key my-map "f" (cons "files" some-map))
+(define-key evil-normal-state-map (kbd "SPC") my-map)
+;;(global-set-key (kbd "SPC") some-map)
+
+;;Exit insert mode by pressing j and then j quickly
+(setq key-chord-two-keys-delay 0.5)
+(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+(key-chord-mode 1)
+
+
 ;; nice theme
 (use-package doom-themes
   :ensure t
@@ -107,27 +77,51 @@
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config))
 
+;; deletes super ugly dots at the start of a bullet
+;; https://www.reddit.com/r/spacemacs/comments/hrdj0x/dots_appearing_in_orgmode_bullet_lists/
+(setq org-hide-leading-stars nil) ;; ugly dots
+(setq org-superstar-leading-bullet ?\s) ;; ogly dots
+(require 'org-superstar)
+(add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
+
+;; recentf stuff
+(require 'recentf)
+(recentf-mode 1)
+(setq recentf-max-menu-items 25)
+(global-set-key "\C-x\ \C-r" 'recentf-open-files)
+
+(ivy-mode 1)
+(use-package ivy :demand
+      :config
+      (setq ivy-use-virtual-buffers t
+            ivy-count-format "%d/%d "))
+(ivy-mode)
+(setq ivy-use-virtual-buffers t)
+(setq enable-recursive-minibuffers t)
+;; enable this if you want `swiper' to use it
+;; (setq search-default-mode #'char-fold-to-regexp)
+(global-set-key "\C-s" 'swiper)
+(global-set-key (kbd "C-c C-r") 'ivy-resume)
+(global-set-key (kbd "<f6>") 'ivy-resume)
+(global-set-key (kbd "M-x") 'counsel-M-x)
+(global-set-key (kbd "C-x C-f") 'counsel-find-file)
+(global-set-key (kbd "<f1> f") 'counsel-describe-function)
+(global-set-key (kbd "<f1> v") 'counsel-describe-variable)
+(global-set-key (kbd "<f1> o") 'counsel-describe-symbol)
+(global-set-key (kbd "<f1> l") 'counsel-find-library)
+(global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+(global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+(global-set-key (kbd "C-c g") 'counsel-git)
+(global-set-key (kbd "C-c j") 'counsel-git-grep)
+(global-set-key (kbd "C-c k") 'counsel-ag)
+(global-set-key (kbd "C-x l") 'counsel-locate)
+(global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
+(define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
 
 (add-to-list 'load-path "~/.emacs.d/myloadpath")
 (require 'zen-mode)
 (global-set-key (kbd "C-M-z") 'zen-mode)
 
-;; commented evil *** Evil mode ***
-
-;; Download Evil
-;;(unless (package-installed-p 'evil)
-;;(package-install 'evil))
-;; needs to be before require evil
-;;(setq evil-want-C-u-scroll t) ;; scroll with C-u
-;;(setq evil-want-C-i-jump nil) ;; tab in org mode
-;; Enable Evil
-;;(require 'evil)
-;;(evil-mode  0)
-
-;;Exit insert mode by pressing j and then j quickly
-;;(setq key-chord-two-keys-delay 0.5)
-;;(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
-;;(key-chord-mode 0)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -135,7 +129,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(zen-mode counsel ivy org-superstar evil-org org-modern evil-visual-mark-mode evil)))
+   '(zen-mode counsel ivy org-superstar which-key evil-org org-modern evil-visual-mark-mode evil))
+ '(which-key-add-column-padding 20))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
