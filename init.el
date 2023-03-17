@@ -5,6 +5,34 @@
 (package-initialize)
 (package-refresh-contents)
 
+;; Keep the menu bar visible.  The menu bar includes entries like
+;; "File" and "Buffers".  It can be helpful at this early stage as it
+;; shows the key bindings for commands.
+(menu-bar-mode 1)
+
+;; Disable the icons that are shown at the top of the Emacs window.
+;; We do not need them because we already have the global menu bar.
+(tool-bar-mode -1)
+
+;; Keep the scroll bar enabled for the time being.  It helps if you
+;; intend to use the mouse (might be needed if you try the Emacs
+;; keys).
+(scroll-bar-mode 1)
+
+;not needed for new
+;; When you have some text selected, any input will delete it and
+;; replace it with what you typed in.  This is how virtually all
+;; programs work nowadays.  I think it is a better default.
+;(delete-selection-mode 1)
+
+;dired in colors
+(unless (package-installed-p 'diredfl)
+  (package-install 'diredfl))
+
+(require 'diredfl)
+
+(diredfl-global-mode 1)
+
 ;; *** Org mode ***
 ;; deletes super ugly dots at the start of a bullet
 ;; https://www.reddit.com/r/spacemacs/comments/hrdj0x/dots_appearing_in_orgmode_bullet_lists/
@@ -12,43 +40,102 @@
 (setq org-superstar-leading-bullet ?\s) ;; ogly dots
 (require 'org-superstar)
 (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
-
 (setq org-agenda-files (list "~/test"))
 
-(global-set-key (kbd "C-c l") #'org-store-link)
-(global-set-key (kbd "C-c a") #'org-agenda)
-(global-set-key (kbd "C-c c") #'org-capture)
+;(global-set-key (kbd "C-c l") #'org-store-link)
+;(global-set-key (kbd "C-c a") #'org-agenda)
+;(global-set-key (kbd "C-c c") #'org-capture)
 
-;; *** Ivy mode ***
-(ivy-mode 1)
-(use-package ivy :demand
-      :config
-      (setq ivy-use-virtual-buffers t
-            ivy-count-format "%d/%d "))
-(ivy-mode)
-(setq ivy-use-virtual-buffers t)
-(setq enable-recursive-minibuffers t)
-;;enable this if you want `swiper' to use it
-(setq search-default-mode #'char-fold-to-regexp)
-(global-set-key "\C-s" 'swiper)
-(global-set-key (kbd "C-c C-r") 'ivy-resume)
-(global-set-key (kbd "<f6>") 'ivy-resume)
-(global-set-key (kbd "M-x") 'counsel-M-x)
-(global-set-key (kbd "C-x C-f") 'counsel-find-file)
-(global-set-key (kbd "<f1> f") 'counsel-describe-function)
-(global-set-key (kbd "<f1> v") 'counsel-describe-variable)
-(global-set-key (kbd "<f1> o") 'counsel-describe-symbol)
-(global-set-key (kbd "<f1> l") 'counsel-find-library)
-(global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
-(global-set-key (kbd "<f2> u") 'counsel-unicode-char)
-(global-set-key (kbd "C-c g") 'counsel-git)
-(global-set-key (kbd "C-c j") 'counsel-git-grep)
-(global-set-key (kbd "C-c k") 'counsel-ag)
-(global-set-key (kbd "C-x l") 'counsel-locate)
-(global-set-key (kbd "C-S-o") 'counsel-rhythmbox)
-(define-key minibuffer-local-map (kbd "C-r") 'counsel-minibuffer-history)
-;;(global-set-key "\C-x\ \C-r" 'counsel-recentf)
+(add-hook 'org-tab-first-hook
+           ;; Only fold the current tree, rather than recursively
+            #'+org-cycle-only-current-subtree-h)
+         
+;;;###autoload
+(defun +org-cycle-only-current-subtree-h (&optional arg)
+  "Toggle the local fold at the point, and no deeper.
+`org-cycle's standard behavior is to cycle between three levels: collapsed,
+subtree and whole document. This is slow, especially in larger org buffer. Most
+of the time I just want to peek into the current subtree -- at most, expand
+*only* the current subtree.
+All my (performant) foldings needs are met between this and `org-show-subtree'
+(on zO for evil users), and `org-cycle' on shift-TAB if I need it."
+  (interactive "P")
+  (unless (or (eq this-command 'org-shifttab)
+              (and (bound-and-true-p org-cdlatex-mode)
+                   (or (org-inside-LaTeX-fragment-p)
+                       (org-inside-latex-macro-p))))
+    (save-excursion
+      (org-beginning-of-line)
+      (let (invisible-p)
+        (when (and (org-at-heading-p)
+                   (or org-cycle-open-archived-trees
+                       (not (member org-archive-tag (org-get-tags))))
+                   (or (not arg)
+                       (setq invisible-p (outline-invisible-p (line-end-position)))))
+          (unless invisible-p
+            (setq org-cycle-subtree-status 'subtree))
+          (org-cycle-internal-local)
+          t)))))
 
+;; set letters to bigger font size
+(set-face-attribute 'default nil :height 200)
+
+;; set margin because of my big monitor
+(setq-default left-margin-width 50)
+
+;function, that could chang the margin
+;(setq my-margin-left 50) ;; eval to change the left margin immediately.
+;(setq my-margin-right 0) ;; eval to change the right margin immediately.
+;
+;(defun my-update-margins ()
+;  (set-window-margins (get-buffer-window) my-margin-left my-margin-right))
+;
+;(add-hook 'window-configuration-change-hook 'my-update-margins)
+;(add-hook 'window-state-change-hook 'my-update-margins)
+;
+
+;; find file preview
+(unless (package-installed-p 'vertico)
+  (package-install 'vertico))
+
+(require 'vertico)
+
+(vertico-mode 1)
+
+; find file preview last used in hours etc.
+;;; `marginalia' is a package that we need to install.
+(unless (package-installed-p 'marginalia)
+(package-install 'marginalia))
+;
+(require 'marginalia)
+;
+(marginalia-mode 1)
+
+;better regex search in find file
+(require 'orderless)
+(setq completion-styles '(orderless basic)
+      completion-category-overrides '((file (styles basic partial-completion orderless))))
+
+;; recentf stuff -> must be enabled for consult
+(require 'recentf)
+(recentf-mode 1)
+;
+(unless (package-installed-p 'consult)
+  (package-install 'consult))
+
+; Example configuration for Consult - narrows for example in search-org-heading
+(use-package consult
+  ;; Replace bindings. Lazily loaded due by `use-package'.
+  :config
+(setq consult-narrow-key "<") ;; "C-+"
+ ; (;; C-c bindings (mode-specific-map)
+         ;("C-c M-x" . consult-mode-command)
+         ;("C-c h" . consult-history)
+;	 )
+  )
+;					;
+;
+;
 ;; *** Which key ***
 ;; shows shortcuts, when clicking C-x
 (add-to-list 'load-path "/Users/dave/.emacs.d/elpa/which-key-20220811.1616/which-key.el")
@@ -79,10 +166,15 @@
 
 (setq file-map (make-sparse-keymap))
 (define-key file-map "s" '("Save file" . save-buffer))
-(define-key file-map "r" '("Open Recent files" . counsel-recentf))
-(define-key file-map "f" '("find file" . counsel-find-file))
-(define-key file-map "b" '("bar-prefix" . (keymap)))
+(define-key file-map "r" '("Open Recent files" . consult-recent-file))
+(define-key file-map "f" '("find file" . find-file))
+(setq search-map (make-sparse-keymap))
+(define-key search-map "s" '("search-buffer" . consult-line))
+(setq org-map (make-sparse-keymap))
+(define-key org-map "." '("search-heading" . consult-org-heading))
 (setq my-map (make-sparse-keymap))
+(define-key my-map "m" (cons "org" org-map))
+(define-key my-map "s" (cons "search" search-map))
 (define-key my-map "f" (cons "files" file-map))
 ;;(define-key evil-normal-state-map (kbd "SPC") my-map)
 (global-set-key (kbd "C-c") my-map)
@@ -108,9 +200,25 @@
   (doom-themes-org-config))
 
 
-(add-to-list 'load-path "~/.emacs.d/myloadpath")
+(add-to-list 'load-path "/home/dave/.emacs.d/myloadpath/zen-mode")
 (require 'zen-mode)
 (global-set-key (kbd "C-M-z") 'zen-mode)
+
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(zen-mode counsel ivy org-superstar evil-org org-modern evil-visual-mark-mode evil)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+(put 'downcase-region 'disabled nil)
 
 ;; commented evil *** Evil mode ***
 
@@ -128,18 +236,3 @@
 ;;(setq key-chord-two-keys-delay 0.5)
 ;;(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
 ;;(key-chord-mode 0)
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(zen-mode counsel ivy org-superstar evil-org org-modern evil-visual-mark-mode evil)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-(put 'downcase-region 'disabled nil)
