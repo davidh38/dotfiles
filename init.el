@@ -1,9 +1,12 @@
-;; Set up package.el to work with MELPA
+ ;; Set up package.el to work with MELPA
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
-(package-initialize)
-(package-refresh-contents)
+
+; don't want to lose time during startup
+;(package-initialize)
+;(package-refresh-contents)
+ 
 
 ;; Keep the menu bar visible.  The menu bar includes entries like
 ;; "File" and "Buffers".  It can be helpful at this early stage as it
@@ -35,12 +38,151 @@
 
 ;; *** Org mode ***
 ;; deletes super ugly dots at the start of a bullet
-;; https://www.reddit.com/r/spacemacs/comments/hrdj0x/dots_appearing_in_orgmode_bullet_lists/
+;; https://www.reddit.com/r/spacemacs/comments/hrdj0x/dots_appearing_in_orgmode_bullet_lists
+
+;(setq org-todo-keywords
+;      '((sequence "TODO" "DONE" "KILL")))
+
+;(setq org-todo-keyword-faces
+;      '(("KILL" . "red")
+;        ("DONE" . "gray"))
+;      )
+
 (setq org-hide-leading-stars nil) ;; ugly dots
 (setq org-superstar-leading-bullet ?\s) ;; ogly dots
 (require 'org-superstar)
 (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
-(setq org-agenda-files (list "~/test"))
+
+; intentation of log book for example and text
+(setq org-adapt-indentation t)
+;(org-agenda-files '("/home/dave/Dropbox/org/notebook.org" "/home/dave/Dropbox/org1/schedule.org" "/home/dave/Dropbox/org1/schedule.org_archive" "/home/dave/Dropbox/org1/birthdays.org" "/home/dave/Dropbox/org1/mypdf.org" "/home/dave/Dropbox/org1/priv.org" "/home/dave/Dropbox/org1/test.org" "/home/dave/Dropbox/org1/events.org" "/home/dave/Dropbox/org1/work.org"))
+
+
+(setq org-agenda-files (list "/home/dave/Dropbox/org1/schedule.org"))
+
+                                        ;(lambda () (writeroom-mode 1)))
+  (setq org-tags-exclude-from-inheritance '("time_booking"))
+  (setq org-agenda-start-on-weekday 1)         ;; calendar begins today
+  (setq org-agenda-start-day "1d")
+  (setq org-agenda-clockreport-parameter-plist
+                                        ;'(:scope file :maxlevel 3 :link t :properties ("Effort") :formula "$5='(- $1 $4);U::@1$1=string(\"Effort\")::@1$3=string(\"Total\")::@1$4=string(\"Task time\")" :formatter my-clocktable-write)
+                                        ;'(:maxlevel 3) :properties ("Effort") :fileskip0 t :formatter my-clocktable-write :formula "$7='(- $2 $4);U::$8='(- $2 $5);U::$9='(- $2 $6);U" )
+        '(:maxlevel 4 ;:properties ("Effort") :fileskip0 t :formatter my-clocktable-write :formula "$9='(- $3 $5);U::$10='(- $2 $6);U::$11='(- $2 $7);U::$12='(- $3 $8);U"
+          )
+        )
+
+
+;
+;(setq org-agenda-custom-commands
+;      '(
+;	("w" "work todos"
+;(agenda "" (org-agenda-span 7)
+;(org-agenda-files '("/home/dave/Dropbox/org/notebook.org" "/home/dave/Dropbox/org1/schedule.org" "/home/dave/Dropbox/org1/schedule.org_archive" "/home/dave/Dropbox/org1/birthdays.org" "/home/dave/Dropbox/org1/mypdf.org" "/home/dave/Dropbox/org1/priv.org" "/home/dave/Dropbox/org1/test.org" "/home/dave/Dropbox/org1/events.org" "/home/dave/Dropbox/org1/work.org"))
+;
+;	)
+;))
+;      )
+;
+
+;       (setq org-agenda-custom-commands
+;               
+;                        '("w" "work todos"
+;                                (
+;                                        (agenda ""
+;
+;                                                (                                                (org-agenda-span 7)                      ;; overview of appointments
+;                                                (calendar-week-start-day 0)
+;                                                (org-agenda-start-on-weekday 1)         ;; calendar begins today
+;                                                )
+;                                        )
+;                                        (tags-todo "work")
+;                                        ;(tags-todo "-personal")
+;                                )
+;
+;                        )
+;		
+;	)
+;
+
+;(add-to-list 'org-agenda-custom-commands 'test-org-agenda-custom-commands)       
+		
+;   (setq  org-agenda-custom-commands
+;       '(append org-agenda-custom-commands
+;                '(
+;                        ("w" "work todos"
+;                                (
+;                                        (agenda ""
+;
+;                                                ((org-agenda-files '("/home/dave/Dropbox/org/notebook.org" "/home/dave/Dropbox/org1/schedule.org" "/home/dave/Dropbox/org1/schedule.org_archive" "/home/dave/Dropbox/org1/birthdays.org" "/home/dave/Dropbox/org1/mypdf.org" "/home/dave/Dropbox/org1/priv.org" "/home/dave/Dropbox/org1/test.org" "/home/dave/Dropbox/org1/events.org" "/home/dave/Dropbox/org1/work.org"))
+;                                                (org-agenda-span 7)                      ;; overview of appointments
+;                                                (calendar-week-start-day 0)
+;                                                (org-agenda-start-on-weekday 1)         ;; calendar begins today
+;                                                )
+;                                        )
+;                                        (tags-todo "work")
+;                                        ;(tags-todo "-personal")
+;                                )
+;
+;                        )
+;
+;                        ("r" "reflections"
+;                                (
+;                                        (agenda ""
+;                                                ((org-agenda-span 7)                      ;; overview of appointments
+;                                                (calendar-week-start-day 0)
+;                                                (org-agenda-start-on-weekday 1)         ;; calendar begins today
+;                                        )
+;
+;                                        )
+;                                        (tags-todo "inbox -problems")
+;                                        (tags-todo "-problems")
+;                                )
+;                        )
+;
+;                        ("p" "problems"
+;                                (
+;                                        (agenda ""
+;                                                ((org-agenda-span 7)                      ;; overview of appointments
+;                                                (calendar-week-start-day 0)
+;                                                (org-agenda-start-on-weekday 1))         ;; calendar begins today
+;
+;                                        )
+;                                        (tags-todo "problems")
+;                                )
+;
+;                        )
+;
+;                        ("~" "tasks"
+;                                (
+;                                        (agenda ""
+;                                                ((org-agenda-span 7)                      ;; overview of appointments
+;                                                (calendar-week-start-day 0)
+;                                                (org-agenda-start-on-weekday 1))         ;; calendar begins today
+;
+;                                        )
+;                                        (tags-todo "tasks")
+;                                )
+;
+;                        )
+;
+;                        ("i" "inbox todos"
+;                                        ; das ist fuer die todas
+;                                (
+;                                        (agenda ""
+;                                                ((org-agenda-files '("/home/dave/Dropbox/org/notebook.org" "/home/dave/Dropbox/org1/schedule.org" "/home/dave/Dropbox/org1/schedule.org_archive" "/home/dave/Dropbox/org1/birthdays.org" "/home/dave/Dropbox/org1/mypdf.org" "/home/dave/Dropbox/org1/priv.org" "/home/dave/Dropbox/org1/test.org" "/home/dave/Dropbox/org1/events.org"))
+;                                        ;(org-agenda-sorting-strategy '(priority-up effort-down))
+;                                                (org-agenda-span 7)                      ;; overview of appointments
+;                                                (calendar-week-start-day 0)
+;                                                (org-agenda-start-on-weekday 1)         ;; calendar begins today)
+;                                        )
+;                                )
+;                                (tags-todo "inbox")
+;                                )
+;				)
+;			)
+;                   ))
+;
+;
 
 ;(global-set-key (kbd "C-c l") #'org-store-link)
 ;(global-set-key (kbd "C-c a") #'org-agenda)
@@ -172,10 +314,13 @@ All my (performant) foldings needs are met between this and `org-show-subtree'
 (define-key search-map "s" '("search-buffer" . consult-line))
 (setq org-map (make-sparse-keymap))
 (define-key org-map "." '("search-heading" . consult-org-heading))
+(setq notes-map (make-sparse-keymap))
+(define-key notes-map "a" '("agenda" . org-agenda))
 (setq my-map (make-sparse-keymap))
 (define-key my-map "m" (cons "org" org-map))
 (define-key my-map "s" (cons "search" search-map))
 (define-key my-map "f" (cons "files" file-map))
+(define-key my-map "n" (cons "notes" notes-map))
 ;;(define-key evil-normal-state-map (kbd "SPC") my-map)
 (global-set-key (kbd "C-c") my-map)
 
