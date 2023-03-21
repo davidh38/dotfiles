@@ -1,4 +1,4 @@
- ;; Set up package.el to work with MELPA
+;; Set up package.el to work with MELPA
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
@@ -36,12 +36,17 @@
 
 (diredfl-global-mode 1)
 
+;; org-download is need for C-c map coying images
+(require 'org-download)
+;; Drag-and-drop to `dired`
+(add-hook 'dired-mode-hook 'org-download-enable)
+
 ;; *** Org mode ***
 ;; deletes super ugly dots at the start of a bullet
 ;; https://www.reddit.com/r/spacemacs/comments/hrdj0x/dots_appearing_in_orgmode_bullet_lists
 
-;(setq org-todo-keywords
-;      '((sequence "TODO" "DONE" "KILL")))
+(setq org-todo-keywords
+      '((sequence "TODO" "|" "DONE" "KILL")))
 
 ;(setq org-todo-keyword-faces
 ;      '(("KILL" . "red")
@@ -316,11 +321,22 @@ All my (performant) foldings needs are met between this and `org-show-subtree'
 (define-key org-map "." '("search-heading" . consult-org-heading))
 (setq notes-map (make-sparse-keymap))
 (define-key notes-map "a" '("agenda" . org-agenda))
+(setq projectile-map (make-sparse-keymap))
+(define-key projectile-map "p" '("switch to project" . projectile-switch-project))
+(define-key projectile-map "a" '("add project" . projectile-add-known-project))
+(setq bindings-map (make-sparse-keymap))
+(define-key bindings-map "t" '("bindings map" . which-key-show-top-level))
+(setq help-map (make-sparse-keymap))
+(define-key help-map "b" (cons "bindings" bindings-map))
+
 (setq my-map (make-sparse-keymap))
 (define-key my-map "m" (cons "org" org-map))
 (define-key my-map "s" (cons "search" search-map))
 (define-key my-map "f" (cons "files" file-map))
 (define-key my-map "n" (cons "notes" notes-map))
+(define-key my-map "p" (cons "project" projectile-map))
+(define-key my-map "h" (cons "help" help-map))
+
 ;;(define-key evil-normal-state-map (kbd "SPC") my-map)
 (global-set-key (kbd "C-c") my-map)
 
