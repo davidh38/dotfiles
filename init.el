@@ -3,6 +3,44 @@
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
 
+
+
+;embark mode
+(use-package embark
+  :ensure t
+
+  :bind
+  (("C-." . embark-act)         ;; pick some comfortable binding
+   ("C-;" . embark-dwim)        ;; good alternative: M-.
+   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+
+  :init
+
+  ;; Optionally replace the key help with a completing-read interface
+  (setq prefix-help-command #'embark-prefix-help-command)
+
+  ;; Show the Embark target at point via Eldoc.  You may adjust the Eldoc
+  ;; strategy, if you want to see the documentation from multiple providers.
+  (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
+  ;; (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
+
+  :config
+
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
+
+;;; Programming in clojure and Python3
+;; Consult users will also want the embark-consult package.
+(use-package embark-consult
+  :ensure t ; only need to install it, embark loads it after consult if found
+  :hook
+  (embark-collect-mode . consult-preview-at-point-mode))
+
+
 (require 'cider)
 (setq org-babel-clojure-backend 'cider)
 
@@ -422,11 +460,16 @@ All my (performant) foldings needs are met between this and `org-show-subtree'
 (define-key dave/file-map "C" '("copy file" . doom/copy-this-file))
 (setq search-map (make-sparse-keymap))
 (define-key search-map "s" '("search-buffer" . consult-line))
+
+(setq attach-map (make-sparse-keymap))
+(define-key attach-map "p" '("attach" . org-download-clipboard))
 (setq links-map (make-sparse-keymap))
 (define-key links-map "s" '("store link" . org-store-link))
+
 (setq org-map (make-sparse-keymap))
 (define-key org-map "." '("search-heading" . consult-org-heading))
 (define-key org-map "l" (cons "links" links-map))
+(define-key org-map "a" (cons "attachments" attach-map))
 (setq notes-map (make-sparse-keymap))
 (define-key notes-map "a" '("agenda" . org-agenda))
 (setq projectile-map (make-sparse-keymap))
@@ -481,8 +524,11 @@ All my (performant) foldings needs are met between this and `org-show-subtree'
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+
+; show images in org mode
+ '(org-startup-with-inline-images t)
  '(package-selected-packages
-   '(zen-mode counsel ivy org-superstar evil-org org-modern evil-visual-mark-mode evil)))
+   '(embark zen-mode counsel ivy org-superstar evil-org org-modern evil-visual-mark-mode evil)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
