@@ -3,10 +3,50 @@
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
 
+(require 'cider)
+(setq org-babel-clojure-backend 'cider)
+
+(org-babel-do-load-languages
+'org-babel-load-languages
+'((python . t)
+  (clojure . t)
+  ))
+
+(setq org-babel-clojure-backend 'cider)
+(require 'cider)
+;for using python with python and no confirmation
+(setq org-confirm-babel-evaluate nil)
+(setq org-babel-python-command "python3")
+
+
+; cache projects, so the after restart the projects are added correctly
+(require 'projectile)
+(projectile-global-mode)
+(setq projectile-enable-caching t)
+
+(unless (package-installed-p 'terraform-mode)
+  (package-install 'terraform-mode))
+
+(add-hook 'terraform-mode-hook #'lsp-deferred)
+
+(unless (package-installed-p 'cider)
+  (package-install 'cider))
+
+;clojure: start lsp mode automatically
+(add-hook 'clojure-mode-hook #'lsp-deferred)
+
+(unless (package-installed-p 'clojure-mode)
+  (package-install 'clojure-mode))
+
+;Python: start lsp mode automatically
+(add-hook 'python-mode-hook #'lsp-deferred)
+
+(add-hook 'after-init-hook 'global-company-mode)
+
+
 ; don't want to lose time during startup
 ;(package-initialize)
 ;(package-refresh-contents)
- 
 
 ;; Keep the menu bar visible.  The menu bar includes entries like
 ;; "File" and "Buffers".  It can be helpful at this early stage as it
@@ -28,12 +68,17 @@
 ;; programs work nowadays.  I think it is a better default.
 ;(delete-selection-mode 1)
 
+
+					; python mode works out of the box
+					; start python-mode
+					; start run-python and evaluate
+; lisp mode
+
 ;dired in colors
 (unless (package-installed-p 'diredfl)
   (package-install 'diredfl))
 
 (require 'diredfl)
-
 (diredfl-global-mode 1)
 
 ;; org-download is need for C-c map coying images
@@ -45,13 +90,24 @@
 ;; deletes super ugly dots at the start of a bullet
 ;; https://www.reddit.com/r/spacemacs/comments/hrdj0x/dots_appearing_in_orgmode_bullet_lists
 
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "/home/dave/Dropbox/org1/tasks.org" "Tasks")
+         "* TODO %?\n  %i\n  %a")
+        ("j" "Journal" entry (file+datetree "~/org/journal.org")
+         "* %?\nEntered on %U\n  %i\n  %a")))
+
+(setq   org-highest-priority ?A
+    org-default-priority ?B
+    org-lowest-priority ?D
+)
+
 (setq org-todo-keywords
       '((sequence "TODO" "|" "DONE" "KILL")))
 
+; on doom KILL is nur highlighted, if hovered over
 ;(setq org-todo-keyword-faces
-;      '(("KILL" . "red")
-;        ("DONE" . "gray"))
-;      )
+;      '(("KILL" . "darkred")))
+
 
 (setq org-hide-leading-stars nil) ;; ugly dots
 (setq org-superstar-leading-bullet ?\s) ;; ogly dots
@@ -193,6 +249,53 @@
 ;(global-set-key (kbd "C-c a") #'org-agenda)
 ;(global-set-key (kbd "C-c c") #'org-capture)
 
+
+(defun doom--update-files (&rest files)
+  "Ensure FILES are updated in `recentf', `magit' and `save-place'."
+  (let (toplevels)
+    (dolist (file files)
+      (when (featurep 'vc)
+        (vc-file-clearprops file)
+        (when-let (buffer (get-file-buffer file))
+          (with-current-buffer buffer
+            (vc-refresh-state))))
+      (when (featurep 'magit)
+        (when-let (default-directory (magit-toplevel (file-name-directory file)))
+          (cl-pushnew default-directory toplevels)))
+      (unless (file-readable-p file)
+        (when (bound-and-true-p recentf-mode)
+          (recentf-remove-if-non-kept file))
+        (when (and (bound-and-true-p projectile-mode)
+                   (doom-project-p)
+                   (projectile-file-cached-p file (doom-project-root)))
+          (projectile-purge-file-from-cache file))))
+    (dolist (default-directory toplevels)
+      (magit-refresh))
+    (when (bound-and-true-p save-place-mode)
+      (save-place-forget-unreadable-files))))
+
+
+
+
+(defun doom/copy-this-file (new-path &optional force-p)
+  "Copy current buffer's file to NEW-PATH.
+
+If FORCE-P, overwrite the destination file if it exists, without confirmation."
+
+  (interactive
+   (list (read-file-name "Copy file to: ")
+         current-prefix-arg))
+  (unless (and buffer-file-name (file-exists-p buffer-file-name))
+    (user-error "Buffer is not visiting any file"))
+  (let ((old-path (buffer-file-name (buffer-base-buffer)))
+        (new-path (expand-file-name new-path)))
+    (make-directory (file-name-directory new-path) 't)
+    (copy-file old-path new-path (or force-p 1))
+    (doom--update-files old-path new-path)
+    (message "File copied to %S" (abbreviate-file-name new-path))))
+
+
+
 (add-hook 'org-tab-first-hook
            ;; Only fold the current tree, rather than recursively
             #'+org-cycle-only-current-subtree-h)
@@ -281,7 +384,8 @@ All my (performant) foldings needs are met between this and `org-show-subtree'
 ;	 )
   )
 ;					;
-;
+
+					;
 ;
 ;; *** Which key ***
 ;; shows shortcuts, when clicking C-x
@@ -311,19 +415,24 @@ All my (performant) foldings needs are met between this and `org-show-subtree'
 ;       :desc "Yank file path"              "y"   #'+default/yank-buffer-path
 ;       :desc "Yank file path from project" "Y"   #'+default/yank-buffer-path-relative-to-project)
 
-(setq file-map (make-sparse-keymap))
-(define-key file-map "s" '("Save file" . save-buffer))
-(define-key file-map "r" '("Open Recent files" . consult-recent-file))
-(define-key file-map "f" '("find file" . find-file))
+(setq dave/file-map (make-sparse-keymap))
+(define-key dave/file-map "s" '("Save file" . save-buffer))
+(define-key dave/file-map "r" '("Open Recent files" . consult-recent-file))
+(define-key dave/file-map "f" '("find file" . find-file))
+(define-key dave/file-map "C" '("copy file" . doom/copy-this-file))
 (setq search-map (make-sparse-keymap))
 (define-key search-map "s" '("search-buffer" . consult-line))
+(setq links-map (make-sparse-keymap))
+(define-key links-map "s" '("store link" . org-store-link))
 (setq org-map (make-sparse-keymap))
 (define-key org-map "." '("search-heading" . consult-org-heading))
+(define-key org-map "l" (cons "links" links-map))
 (setq notes-map (make-sparse-keymap))
 (define-key notes-map "a" '("agenda" . org-agenda))
 (setq projectile-map (make-sparse-keymap))
 (define-key projectile-map "p" '("switch to project" . projectile-switch-project))
 (define-key projectile-map "a" '("add project" . projectile-add-known-project))
+(define-key projectile-map "f" '("find file in project" . projectile-find-file))
 (setq bindings-map (make-sparse-keymap))
 (define-key bindings-map "t" '("bindings map" . which-key-show-top-level))
 (setq help-map (make-sparse-keymap))
@@ -332,10 +441,11 @@ All my (performant) foldings needs are met between this and `org-show-subtree'
 (setq my-map (make-sparse-keymap))
 (define-key my-map "m" (cons "org" org-map))
 (define-key my-map "s" (cons "search" search-map))
-(define-key my-map "f" (cons "files" file-map))
+(define-key my-map "f" (cons "files" dave/file-map))
 (define-key my-map "n" (cons "notes" notes-map))
 (define-key my-map "p" (cons "project" projectile-map))
 (define-key my-map "h" (cons "help" help-map))
+(define-key my-map "X" '("Capture" . org-capture))
 
 ;;(define-key evil-normal-state-map (kbd "SPC") my-map)
 (global-set-key (kbd "C-c") my-map)
