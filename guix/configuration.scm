@@ -46,7 +46,7 @@
                           (specification->package "python")
                           (specification->package "xclip")
                           (specification->package "emacs")
-			  
+                          (specification->package "sakura")
 			  )
                     %base-packages))
 
