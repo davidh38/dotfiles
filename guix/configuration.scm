@@ -54,13 +54,14 @@
                           (specification->package "docker-cli")
                           (specification->package "xrandr")
                           (specification->package "unzip")
-			  
+                          (specification->package "openssh")			  
 			  )
                     %base-packages))
 
   ;; Below is the list of system services.  To search for available
   ;; services, run 'guix system search KEYWORD' in a terminal.
   (services
+   (service nix-service-type)
    %desktop-services)
   (bootloader (bootloader-configuration
                 (bootloader grub-efi-bootloader)
