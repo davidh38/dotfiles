@@ -23,3 +23,6 @@
 * i3
   
   + add config
+
+* characoder
+  + https://launchpad.charachorder.com/#/manager
