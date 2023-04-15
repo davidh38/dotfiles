@@ -36,6 +36,7 @@
                           (specification->package "i3status")
                           (specification->package "dmenu")
                           (specification->package "st")
+                          (specification->package "sakura")
                           (specification->package "nss-certs")
                           (specification->package "icecat")
                           (specification->package "nss-certs")
@@ -46,7 +47,14 @@
                           (specification->package "python")
                           (specification->package "xclip")
                           (specification->package "emacs")
-                          (specification->package "sakura")
+                          (specification->package "thefuck")
+                          (specification->package "emacs-exwm")
+                          (specification->package "emacs-desktop-environment")
+                          (specification->package "docker")
+                          (specification->package "docker-cli")
+                          (specification->package "xrandr")
+                          (specification->package "unzip")
+			  
 			  )
                     %base-packages))
 
