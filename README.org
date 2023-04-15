@@ -1,0 +1,25 @@
+
+* Guix installation
+
+  + Create usb stick and install with graphical installer
+  + add nonguix channel
+  + Download configuration.scm
+  + reconfigure with new configuration from dotfiles
+  + copy keepass
+  + install emacs with exwm config
+  + install github ssh
+  + install flatpak programs:
+    sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+    Discord                   com.discordapp.Discord                  0.0.26      stable          system
+  + create symlinks for dotfiles
+    
+* Emacs
+
+  There are two configurations, one for guix and one for all other distros
+  
+  + TODO
+  + TODO
+
+* i3
+  
+  + add config
