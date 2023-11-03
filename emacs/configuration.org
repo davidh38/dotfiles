@@ -1,897 +1,368 @@
 #+BEGIN_SRC emacs-lisp
-			    ;; Set up package.el to work with MELPA
-			    (require 'package)
-			    (add-to-list 'package-archives
-					 '("melpa" . "https://melpa.org/packages/"))
 
+                       ;; first steps:
+                       ;; package-install which-key ->
+                   ;;can not be installed via use-package
+                       ;; M-x: nerd-icons-install-fonts for doomline
+                   ;(all-the-icons must be installed!)
+
+                 (require 'package)
+                   (add-to-list 'package-archives
+                   '("melpa" . "https://melpa.org/packages/"))
+                   ;; Macos/Linux Setup
+                   (if
+                   (eq system-type 'darwin)
+                   (progn
+                   (defvar my-homedir "/Users/dave")
+                   ; use s-SPC with shift for mark command
+                   (global-set-key
+                   (kbd "s-SPC")
+                   'set-mark-command)
+                   )
+                   ; all other os use /home/dave
+                   (defvar my-homedir "/home/dave")
+                   )
+                   ;; org roam
+                   (use-package org-roam
+                             :ensure t)
+                   ;; first set org-roam
+                   (setq org-roam-directory
+                   (file-truename
+                   (concat my-homedir "/Dropbox/org-roam")))
+                   (org-roam-db-autosync-mode)
+                   ;; *** Which key ***
+
+
+                     ;; shows shortcuts, when clicking C-x
+                   (add-to-list 'load-path
+                   (concat my-homedir ".emacs.d/elpa/which-key-20220811.1616/which-key.el"))
+                   (require 'which-key)
+                   (which-key-mode)
+                   ;; *** Theme ***
+                   (use-package doom-themes
+                                                                                                    :ensure t
+                                                                                                    :config
+                   (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+                       doom-themes-enable-italic t)
+                   ; if nil, italics is universally disabled
+                   (load-theme 'doom-one t)
+                   ;; Enable flashing mode-line on errors
+                   (doom-themes-visual-bell-config)
+                   ;; Enable custom neotree theme
+
+                   ;(doom-themes-neotree-config)
+                   ;; or for treemacs users
+                   (setq doom-themes-treemacs-theme "doom-colors")
+                   ; use "doom-colors" for less minimal icon theme
+                   (doom-themes-treemacs-config)
+                   ;; Corrects
+                 ;;  org-mode's native fontification.
+                   (doom-themes-org-config))
+                   ; doom line looks much nicer
+                                                                      ; remember to install nerd fonts nerd-icons-install-fonts
+                   (use-package all-the-icons
+                             :ensure t)
+                   (use-package doom-modeline
+                             :ensure t
+                             :init
+                   (doom-modeline-mode 1)
+                   )
+                   ;; *** Clojure ***
+                   (use-package clojure-mode
+                             :ensure t
+                                                                  )
+                   ; repl for clojure
+                   (unless
+                   (package-installed-p 'cider)
+                   (package-install 'cider))
+                   ;; Keep the menu bar visible.  The menu bar includes entries like
+                                                                                    ;; "File" and "Buffers".  It can be helpful at this early stage as it
+                                                                                    ;; shows the key bindings for commands.
+                   (menu-bar-mode 1)
+                   ;; Disable the icons that are shown at the top of the Emacs window.
+                                                                                    ;; We do not need them because we already have the global menu bar.
+                   (tool-bar-mode -1)
+                   ;; Keep the scroll bar enabled for the time being.  It helps if you
+                                                                                    ;; intend to use the mouse
+                   ;;(might be needed if you try the Emacs
+                                                                                    ;; keys)
+
+                   (scroll-bar-mode 1)
+                   ;; recentf stuff ->
+                   ;;must be enabled for consult
+                   (require 'recentf)
+                   (recentf-mode 1)
+                   (setq dave/file-map
+                   (make-sparse-keymap))
+                   ;
+                   (define-key dave/file-map "s"
+                   '("Save file" . save-buffer))
+                   (define-key dave/file-map "r"
+                   '("Open Recent files" . consult-recent-file))
+                   ;
+                   (define-key dave/file-map "f"
+                   '("find file" . find-file))
+                   ;
+                   (define-key dave/file-map "C"
+                   '("copy file" . doom/copy-this-file))
+                   (setq dave/search-map
+                   (make-sparse-keymap))
+                   (define-key dave/search-map "s"
+                   '("search-buffer" . consult-line))
+                   ;
+                   (setq dave/attach-map
+                   (make-sparse-keymap))
+                   ;
+                   (define-key dave/attach-map "p"
+                   '("attach" . org-download-clipboard))
+                   ;
+                   (setq dave/links-map
+                   (make-sparse-keymap))
+                   ;
+                   (define-key dave/links-map "s"
+                   '("store link" . org-store-link))
+                   (setq dave/org-map
+                   (make-sparse-keymap))
+                   (define-key dave/org-map "."
+                   '("search-heading" . consult-org-heading))
+                   ;
+                   (define-key dave/org-map "l"
+                   (cons "links" dave/links-map))
+                   ;
+                   (define-key dave/org-map "a"
+                   (cons "attachments" dave/attach-map))
+                   (setq dave/notes-map
+                   (make-sparse-keymap))
+                   (define-key dave/notes-map "a"
+                   '("agenda" . org-agenda))
+                   ;
+                   (setq dave/projectile-map
+                   (make-sparse-keymap))
+                   ;
+                   (define-key dave/projectile-map "p"
+                   '("switch to project" . projectile-switch-project))
+                   ;
+                   (define-key dave/projectile-map "a"
+                   '("add project" . projectile-add-known-project))
+                   ;
+                   (define-key dave/projectile-map "f"
+                   '("find file in project" . projectile-find-file))
+                   ;
+                   (setq dave/bindings-map
+                   (make-sparse-keymap))
+
+
+                   ;
+                   (define-key dave/bindings-map "t"
+                   '("bindings map" . which-key-show-top-level))
+                   ;
+                   (setq dave/help-map
+                   (make-sparse-keymap))
+                   ;
+                   (define-key dave/help-map "b"
+                   (cons "bindings" dave/bindings-map))
+                   (setq dave/my-map
+                   (make-sparse-keymap))
+                   (define-key dave/my-map "m"
+                   (cons "org" dave/org-map))
+                   (define-key dave/my-map "s"
+                   (cons "search" dave/search-map))
+                   (define-key dave/my-map "f"
+                   (cons "files" dave/file-map))
+                   ;
+                   (define-key dave/my-map "n"
+                   (cons "notes" dave/notes-map))
+                   ;
+                   (define-key dave/my-map "p"
+                   (cons "project" dave/projectile-map))
+                   ;
+                   (define-key dave/my-map "h"
+                   (cons "help" dave/help-map))
+                   ;
+                   (define-key dave/my-map "X"
+                   '("Capture" . dave/org-capture))
+                   ;(define-key evil-normal-state-map
+
+                   (global-set-key
+                   (kbd "C-c")
+                   dave/my-map)
+                   ;; m-x preview /  find file preview
+                   (unless
+                   (package-installed-p 'vertico)
+                   (package-install 'vertico))
+                   (require 'vertico)
+                   (vertico-mode 1)
+                   ; find file preview last used in hours etc.
+                                                                                                                     ;;; `marginalia' is a package that we need to install.
+                   (unless
+                   (package-installed-p 'marginalia)
+                   (package-install 'marginalia))
+                   ;
+                   (require 'marginalia)
+                   ;
+                   (marginalia-mode 1)
+                   ;better regex search in find file / recentfile / m-x
+                   (unless
+                   (package-installed-p 'orderless)
+                   (package-install 'orderless))
+                   (require 'orderless)
+                   (setq completion-styles
+                   '(orderless basic)
+                   completion-category-overrides
+                   '((file
+                   (styles basic partial-completion orderless))))
+                   (setq org-attach-id-dir
+                   (concat my-homedir "/Dropbox/org/.attach/"))
+                   (setq org-attach-set-directory
+                   (concat my-homedir "/Dropbox/org/.attach/"))
+
+
+                   (require 'org-download)
+                   (setq org-image-actual-width 800)
+               ;(with-eval-after-load 'org
+                ;   (org-download-enable)))  
+                   ;
+                   (setq org-adapt-indentation t)
+                   (setq org-startup-indented t)
+                   ; consult for consult open recent file
+
+    (setq org-agenda-skip-function-global 
+        '(org-agenda-skip-entry-if 'todo '("DONE" "KILL")))
+
+              (setq org-agenda-files
+                    (list
+
+             (concat my-homedir "/Dropbox/org/schedule.org") (concat my-homedir "/Dropbox/org/schedule.org_archive") (concat my-homedir "/Dropbox/org/birthdays.org")  (concat my-homedir "/Dropbox/org/events.org") (concat my-homedir "/Dropbox/org/work.org")
+             )
+      )
+
+
+
+                                        ;(concat my-homedir "/Dropbox/org/schedule.org") (concat my-homedir "/home/dave/Dropbox/org/schedule.org_archive") (concat my-homedir "/Dropbox/org/birthdays.org")  (concat my-homedir "/Dropbox/org/events.org") (concat my-homedir "/Dropbox/org/work.org"))))
+                                                                                 ;(lambda () (writeroom-mode 1)))
+                                         (setq org-tags-exclude-from-inheritance '("time_booking"))
+                                         (setq org-agenda-start-on-weekday 1)         ;; calendar begins today
+                                         (setq org-agenda-start-day "1d")
+
+                                         (setq org-agenda-clockreport-parameter-plist
+                                                                                 ;'(:scope file :maxlevel 3 :link t :properties ("Effort") :formula "$5='(- $1 $4);U::@1$1=string(\"Effort\")::@1$3=string(\"Total\")::@1$4=string(\"Task time\")" :formatter my-clocktable-write)
+                                                                                 ;'(:maxlevel 3) :properties ("Effort") :fileskip0 t :formatter my-clocktable-write :formula "$7='(- $2 $4);U::$8='(- $2 $5);U::$9='(- $2 $6);U" )
+                                               '(:maxlevel 4 ;:properties ("Effort") :fileskip0 t :formatter my-clocktable-write :formula "$9='(- $3 $5);U::$10='(- $2 $6);U::$11='(- $2 $7);U::$12='(- $3 $8);U"
+                                                           )
+                                               )
+
+                                         (setq org-agenda-custom-commands
+                                                                                 ;	     (append org-agenda-custom-commands
+                                               '(
+
+                                                 ("n" "all"
+                                                  (
+                                                   (agenda ""
+
+                                                           (                                                (org-agenda-span 7)                      ;; overview of appointments
+                                                                                                            (calendar-week-start-day 0)
+                                                                                                            (org-agenda-start-on-weekday 1)         ;; calendar begins today
+                                                                                                            (org-agenda-include-inactive-timestamp t)
+                                                                                                            )
+                                                           )
+
+                                                                                 ;(tagst-odo "-personal")
+                                                   )
+
+                                                  )
+
+
+                                                 ("w" "work todos"
+                                                  (
+                                                   (agenda ""
+
+                                                           (
+
+
+                                                            (org-agenda-files (list (concat my-homdir "/Dropbox/org/work.org") (concat my-homedir "/Dropbox/org/work.org_archive")))
+
+                                                            (org-agenda-span 7)                      ;; overview of appointments
+                                                            (calendar-week-start-day 0)
+                                                            (org-agenda-start-on-weekday 1)         ;; calendar begins today
+                                                            )
+                                                           )
+                                                   (tags-todo "work")
+                                                                                 ;(tagst-odo "-personal")
+                                                   )
+
+                                                  )
+
+
+                                                 ("i" "inbox todos"
+                                                                                 ; das ist fuer die todas
+                                                  (
+                                                   (agenda ""
+                                                           (
+                                                            (org-agenda-files (list (concat my-homedir "/Dropbox/org/schedule.org") (concat my-homedir "/Dropbox/org/schedule.org_archive")))
+                                                                                 ;		  ;(org-agenda-sorting-strategy '(priority-up effort-down))
+                                                            (org-agenda-span 7)                      ;; overview of appointments
+                                                            (calendar-week-start-day 0)
+                                                            (org-agenda-start-on-weekday 1)         ;; calendar begins today)
+
+                                                            )
+                                                           )
+                                                   (tags-todo "inbox")
+                                                   )
+                                                  )
+                                                 )
+                                                                                 ;  )
+                                               )
+
+
+
+                                                                                 ;(global-set-key (kbd "C-c l") #'org-store-link)
+                                                                                 ;(global-set-key (kbd "C-c a") #'org-agenda)
+                                                                                 ;(global-set-key (kbd "C-c c") #'org-capture)
+
+
+    (setq   org-highest-priority ?A
+                                        org-default-priority ?B
+                                        org-lowest-priority ?D
+                                        org-priority-faces '((?A :foreground "#DC143C" :weight bold)
+                                                             (?B :foreground "#E76E34" :weight bold)
+                                                             (?C :foreground "#D8A743" :weight bold)
+                                                             (?D :foreground "#3BAB60" :weight bold))
+                                        )
+
+                                (setq org-todo-keywords
+                                      '((sequence "TODO" "|" "DONE" "KILL")))
+
+
+                   (unless
+                   (package-installed-p 'consult)
+                   (package-install 'consult))
+                   (use-package consult
+                                                                     ;; Replace bindings. Lazily loaded due by `use-package'.
+                                                                     :config
+                   (setq consult-narrow-key "<")
+                   ;; "C-+"
+                                                                                                           ;
+               ;    (mode-specific-map)
+                   ;("C-c M-x" . consult-mode-command)
+                   ;("C-c h" . consult-history)
+                   ;	 )
+
+                   )
+  ; new line at 120 
+  (add-hook 'org-mode-hook '(lambda () (setq fill-column 120)))
+  (add-hook 'org-mode-hook 'turn-on-auto-fill)
+
+
+  (require 'epa-file)
+(epa-file-enable)
+#+END_SRC
+
+#+RESULTS:
+: ‘epa-file’ already enabled
 
-								    ; don't want to lose time during startup
-										     (package-initialize)
-										     (package-refresh-contents)
 
-		  (defvar bootstrap-version)
-		  (let ((bootstrap-file
-			(expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-			(bootstrap-version 5))
-		    (unless (file-exists-p bootstrap-file)
-		      (with-current-buffer
-			  (url-retrieve-synchronously
-			  "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-			  'silent 'inhibit-cookies)
-			(goto-char (point-max))
-			(eval-print-last-sexp)))
-		    (load bootstrap-file nil 'nomessage))
-
-
-
-	      ;
-	  ;    (make-directory "~/Dropbox/org-roam")
-
-    ; otherwise roam does not work
-    (setq emacsql-sqlite-reserved "emacsql-connect")
-      (use-package emacsql-sqlite
-	:ensure t)
-	(use-package magit-section
-	 :ensure t)
-	 (use-package org-roam
-	  :ensure t)
-
-  ;; first set org-roam
-	    (setq org-roam-directory (file-truename "/home/dave/Dropbox/org-roam"))
-  (org-roam-db-autosync-mode)
-
-	    ;; not working and I do not know why
-		(use-package ox-timeline
-		  :ensure t)
-
-		(setq org-timeline-source-url "/home/dave/Timeline/timeline/dist")
-
-		      (straight-use-package 'dirvish)
-		    (dirvish-override-dired-mode)
-
-			(use-package doom-modeline
-			:ensure t
-			:init (doom-modeline-mode 1)
-
-			)
-
-
-			(use-package all-the-icons
-			  :ensure t)
-
-			; pp; With ace-wondow, you can easily jump between windows -> this is a dependency from treemacs
-			  (global-set-key (kbd "M-o") 'ace-window)
-
-			    (unless (package-installed-p 'dockerfile-mode)
-			      (package-install 'dockerfile-mode))
-
-
-			    ;; set margin because of my big monitor
-								    ;			(setq-default left-margin-width 40)  
-
-								    ; Be aware, that your indentatin could cause not to see
-
-								    ;
-
-			    ;; Display Embark actions window at the bottom of the frame in a new
-			    ;; window (this way it does not occupy an existing window).
-			    (add-to-list 'display-buffer-alist
-					 '("\\*Embark Actions\\*"
-					   (display-buffer-reuse-mode-window display-buffer-at-bottom)
-					   (window-height . fit-window-to-buffer)
-					   (window-parameters . ((no-other-window . t)
-								 (mode-line-format . none)))))
-
-			    ;; Display Help buffer below the current window.
-			    (add-to-list 'display-buffer-alist
-					 '("\\*[Hh]elp\\*"
-					   (display-buffer-reuse-mode-window display-buffer-at-bottom)))
-
-
-			    ;; Display a few other buffers, sucha as for messages and the
-			    ;; backtrace, at the bottom of the frame (like with Embark).  Also
-			    ;; make them have a height of 0.3 times the height of the frame.
-			    (add-to-list 'display-buffer-alist
-					 '((or . ((major-mode . flymake-diagnostics-buffer-mode)
-						  (major-mode . flymake-project-diagnostics-mode)
-						  (major-mode . messages-buffer-mode)
-						  (major-mode . backtrace-mode)
-						  "\\*\\(Warnings\\|Compile-Log\\)\\*"
-						  ,world-clock-buffer-name))
-					   (display-buffer-reuse-mode-window display-buffer-at-bottom)
-					   (window-height . 0.3)
-					   (dedicated . t)
-					   (preserve-size . (t . t)))) 
-
-
-			    (defun my/switch-to-most-recently-used-window ()
-			      (interactive)
-			      (select-window (get-mru-window nil nil :not-selected)))
-
-			    (define-key global-map (kbd "C-x O") 'my/switch-to-most-recently-used-window)
-
-
-			    (use-package treemacs
-			      :ensure t
-			      :defer t
-			      :init
-			      (with-eval-after-load 'winum
-				(define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
-			      :config
-			      (progn
-				(setq treemacs-collapse-dirs                   (if treemacs-python-executable 3 0)
-				      treemacs-deferred-git-apply-delay        0.5
-				      treemacs-directory-name-transformer      #'identity
-				      treemacs-display-in-side-window          t
-				      treemacs-eldoc-display                   'simple
-				      treemacs-file-event-delay                2000
-				      treemacs-file-extension-regex            treemacs-last-period-regex-value
-				      treemacs-file-follow-delay               0.2
-				      treemacs-file-name-transformer           #'identity
-				      treemacs-follow-after-init               t
-				      treemacs-expand-after-init               t
-				      treemacs-find-workspace-method           'find-for-file-or-pick-first
-				      treemacs-git-command-pipe                ""
-				      treemacs-goto-tag-strategy               'refetch-index
-				      treemacs-header-scroll-indicators        '(nil . "^^^^^^")
-				      treemacs-hide-dot-git-directory          t
-				      treemacs-indentation                     2
-				      treemacs-indentation-string              " "
-				      treemacs-is-never-other-window           nil
-				      treemacs-max-git-entries                 5000
-				      treemacs-missing-project-action          'ask
-				      treemacs-move-forward-on-expand          nil
-				      treemacs-no-png-images                   nil
-				      treemacs-no-delete-other-windows         t
-				      treemacs-project-follow-cleanup          nil
-				      treemacs-persist-file                    (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
-				      treemacs-position                        'left
-				      treemacs-read-string-input               'from-child-frame
-				      treemacs-recenter-distance               0.1
-				      treemacs-recenter-after-file-follow      nil
-				      treemacs-recenter-after-tag-follow       nil
-				      treemacs-recenter-after-project-jump     'always
-				      treemacs-recenter-after-project-expand   'on-distance
-				      treemacs-litter-directories              '("/node_modules" "/.venv" "/.cask")
-				      treemacs-project-follow-into-home        nil
-				      treemacs-show-cursor                     nil
-				      treemacs-show-hidden-files               t
-				      treemacs-silent-filewatch                nil
-				      treemacs-silent-refresh                  nil
-				      treemacs-sorting                         'alphabetic-asc
-				      treemacs-select-when-already-in-treemacs 'move-back
-				      treemacs-space-between-root-nodes        t
-				      treemacs-tag-follow-cleanup              t
-				      treemacs-tag-follow-delay                1.5
-				      treemacs-text-scale                      nil
-				      treemacs-user-mode-line-format           nil
-				      treemacs-user-header-line-format         nil
-				      treemacs-wide-toggle-width               70
-				      treemacs-width                           35
-				      treemacs-width-increment                 1
-				      treemacs-width-is-initially-locked       t
-				      treemacs-workspace-switch-cleanup        nil)
-
-				;; The default width and height of the icons is 22 pixels. If you are
-				;; using a Hi-DPI display, uncomment this to double the icon size.
-				;;(treemacs-resize-icons 44)
-
-				(treemacs-follow-mode t)
-				(treemacs-filewatch-mode t)
-				(treemacs-fringe-indicator-mode 'always)
-				(when treemacs-python-executable
-				  (treemacs-git-commit-diff-mode t))
-
-				(pcase (cons (not (null (executable-find "git")))
-					     (not (null treemacs-python-executable)))
-				  (`(t . t)
-				   (treemacs-git-mode 'deferred))
-				  (`(t . _)
-				   (treemacs-git-mode 'simple)))
-
-				(treemacs-hide-gitignored-files-mode nil))
-			      :bind
-			      (:map global-map
-				    ("M-0"       . treemacs-select-window)
-				    ("C-x t 1"   . treemacs-delete-other-windows)
-				    ("C-x t t"   . treemacs)
-				    ("C-x t d"   . treemacs-select-directory)
-				    ("C-x t B"   . treemacs-bookmark)
-				    ("C-x t C-t" . treemacs-find-file)
-				    ("C-x t M-t" . treemacs-find-tag)))
-
-			    (treemacs)
-
-			    (use-package treemacs-projectile
-			      :after (treemacs projectile)
-			      :ensure t)
-
-			    (use-package treemacs-icons-dired
-			      :hook (dired-mode . treemacs-icons-dired-enable-once)
-			      :ensure t)
-
-			    (use-package treemacs-magit
-			      :after (treemacs magit)
-			      :ensure t)
-
-			    (use-package treemacs-persp ;;treemacs-perspective if you use perspective.el vs. persp-mode
-			      :after (treemacs persp-mode) ;;or perspective vs. persp-mode
-			      :ensure t
-			      :config (treemacs-set-scope-type 'Perspectives))
-
-			    (use-package treemacs-tab-bar ;;treemacs-tab-bar if you use tab-bar-mode
-			      :after (treemacs)
-			      :ensure t
-			      :config (treemacs-set-scope-type 'Tabs))
-
-
-
-			    (unless (package-installed-p 'anki-editor)
-			      (package-install 'anki-editor))
-
-			    (unless (package-installed-p 'ox-reveal)
-			      (package-install 'ox-reveal))
-
-			    (require 'ox-reveal)
-			    (setq org-reveal-root "/home/dave/JavascriptProjects/reveal.js")
-
-								    ;for using quelpa
-			    (unless (package-installed-p 'quelpa)
-			      (with-temp-buffer
-				(url-insert-file-contents "https://raw.githubusercontent.com/quelpa/quelpa/master/quelpa.el")
-				(eval-buffer)
-				(quelpa-self-upgrade)))
-
-			    ;;quelpa only working with this: see https://emacs.stackexchange.com/questions/62036/installing-quelpa-use-package-from-use-package
-			    (require 'use-package)
-			    (require 'quelpa-use-package)
-
-			    (use-package copilot
-			      :quelpa (copilot :fetcher github
-					       :repo "zerolfx/copilot.el"
-					       :branch "main"
-					       :files ("dist" "*.el")))
-			    ;; you can utilize :map :hook and :config to customize copilot
-			    (with-eval-after-load 'company
-			      ;; disable inline previews
-			      (delq 'company-preview-if-just-one-frontend company-frontends))
-
-			    (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
-			    (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
-
-								    ;  (define-key copilot-completion-map (kbd "C-n") 'copilot-next-completion)
-								    ; (define-key copilot-completion-map (kbd "C-p") 'copilot-previous-completion)
-			    (define-key copilot-completion-map (kbd "C-g") 'copilot-abort-completion)
-
-
-								    ;embark mode
-			    (use-package embark
-			      :ensure t
-
-			      :bind
-			      (("C-." . embark-act)         ;; pick some comfortable binding
-			       ("C-;" . embark-dwim)        ;; good alternative: M-.
-			       ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
-
-			      :init
-
-			      ;; Optionally replace the key help with a completing-read interface
-			      (setq prefix-help-command #'embark-prefix-help-command)
-
-			      ;; Show the Embark target at point via Eldoc.  You may adjust the Eldoc
-			      ;; strategy, if you want to see the documentation from multiple providers.
-			      (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
-			      ;; (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
-
-			      :config
-
-			      ;; Hide the mode line of the Embark live/completions buffers
-			      (add-to-list 'display-buffer-alist
-					   '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
-					     nil
-					     (window-parameters (mode-line-format . none)))))
-
-
-										  ;;; Programming in clojure and Python3
-			    ;; Consult users will also want the embark-consult package.
-			    (use-package embark-consult
-			      :ensure t ; only need to install it, embark loads it after consult if found
-			      :hook
-			      (embark-collect-mode . consult-preview-at-point-mode))
-
-
-			    (require 'cider)
-			    (setq org-babel-clojure-backend 'cider)
-
-			    (org-babel-do-load-languages
-			     'org-babel-load-languages
-			     '((python . t)
-			       (clojure . t)
-			       ))
-
-			    (setq org-babel-clojure-backend 'cider)
-			    (require 'cider)
-								    ;for using python with python and no confirmation
-			    (setq org-confirm-babel-evaluate nil)
-			    (setq org-babel-python-command "python3")
-
-
-								    ; cache projects, so the after restart the projects are added correctly
-			    (require 'projectile)
-			    (projectile-global-mode)
-			    (setq projectile-enable-caching t)
-
-			    (unless (package-installed-p 'terraform-mode)
-			      (package-install 'terraform-mode))
-
-			    (add-hook 'terraform-mode-hook
-				      (lambda ()
-					(copilot-mode)
-					#'lsp-deferred))
-
-			    (unless (package-installed-p 'cider)
-			      (package-install 'cider))
-
-								    ;clojure: start lsp mode automatically
-			    (add-hook 'clojure-mode-hook
-
-				      (lambda ()
-					#'lsp-deferred
-					(copilot-mode)
-					(flycheck-mode)
-					))
-
-
-			    ;; First install the package:
-			    (use-package flycheck-clj-kondo
-			      :ensure t)
-
-			    ;; then install the checker as soon as `clojure-mode' is loaded
-			    (use-package clojure-mode
-			      :ensure t
-			      :config
-			      (require 'flycheck-clj-kondo))
-
-								    ;		   (unless (package-installed-p 'clojure-mode)
-								    ;		     (package-install 'clojure-mode))
-
-								    ;Python: start lsp mode automatically
-			    (add-hook 'python-mode-hook
-				      (lambda ()
-					#'lsp-deferred
-					(copilot-mode)
-					(flycheck-mode)
-					))
-
-
-			    (add-hook 'after-init-hook 'global-company-mode)
-
-
-			    ;; Keep the menu bar visible.  The menu bar includes entries like
-			    ;; "File" and "Buffers".  It can be helpful at this early stage as it
-			    ;; shows the key bindings for commands.
-			    (menu-bar-mode 1)
-
-			    ;; Disable the icons that are shown at the top of the Emacs window.
-			    ;; We do not need them because we already have the global menu bar.
-			    (tool-bar-mode -1)
-
-			    ;; Keep the scroll bar enabled for the time being.  It helps if you
-			    ;; intend to use the mouse (might be needed if you try the Emacs
-			    ;; keys).
-			    (scroll-bar-mode 1)
-
-								    ;not needed for new
-			    ;; When you have some text selected, any input will delete it and
-			    ;; replace it with what you typed in.  This is how virtually all
-			    ;; programs work nowadays.  I think it is a better default.
-								    ;(delete-selection-mode 1)
-
-
-								    ; python mode works out of the box
-								    ; start python-mode
-								    ; start run-python and evaluate
-								    ; lisp mode
-
-								    ;dired in colors
-			    (unless (package-installed-p 'diredfl)
-			      (package-install 'diredfl))
-
-			    (require 'diredfl)
-			    (diredfl-global-mode 1)
-
-			    ;; org-download is need for C-c map coying images
-			    (require 'org-download)
-			    ;; Drag-and-drop to `dired`
-			    (add-hook 'dired-mode-hook 'org-download-enable)
-
-			    ;; *** Org mode ***
-			    ;; deletes super ugly dots at the start of a bullet
-			    ;; https://www.reddit.com/r/spacemacs/comments/hrdj0x/dots_appearing_in_orgmode_bullet_lists
-
-			    (setq org-capture-templates
-				  '(("t" "Todo" entry (file+headline "/home/dave/Dropbox/org1/tasks.org" "Tasks")
-				     "* TODO %?\n  %i\n  %a")
-				    ("j" "Journal" entry (file+datetree "~/org/journal.org")
-				     "* %?\nEntered on %U\n  %i\n  %a")))
-
-			    ;; setting line numbers
-			    (global-display-line-numbers-mode)
-
-
-			    (setq org-image-actual-width 800)
-
-			    (setq   org-highest-priority ?A
-				    org-default-priority ?B
-				    org-lowest-priority ?D
-				    org-priority-faces '((?A :foreground "#DC143C" :weight bold)
-							 (?B :foreground "#E76E34" :weight bold)
-							 (?C :foreground "#D8A743" :weight bold)
-							 (?D :foreground "#3BAB60" :weight bold))
-				    )
-
-			    (setq org-todo-keywords
-				  '((sequence "TODO" "|" "DONE" "KILL")))
-
-								    ; on doom KILL is nur highlighted, if hovered over
-								    ;(setq org-todo-keyword-faces
-								    ;      '(("KILL" . "darkred")))
-
-
-			    (setq org-hide-leading-stars nil) ;; ugly dots
-			    (setq org-superstar-leading-bullet ?\s) ;; ogly dots
-			    (require 'org-superstar)
-			    (add-hook 'org-mode-hook (lambda () (org-superstar-mode 1)))
-
-								    ; intentation of log book for example and text
-			    (setq org-adapt-indentation t)
-								    ;(org-agenda-files '("/home/dave/Dropbox/org/notebook.org" "/home/dave/Dropbox/org1/schedule.org" "/home/dave/Dropbox/org1/schedule.org_archive" "/home/dave/Dropbox/org1/birthdays.org" "/home/dave/Dropbox/org1/mypdf.org" "/home/dave/Dropbox/org1/priv.org" "/home/dave/Dropbox/org1/test.org" "/home/dave/Dropbox/org1/events.org" "/home/dave/Dropbox/org1/work.org"))
-
-
-								    ;  (setq org-agenda-files (list "/home/dave/Dropbox/org1/schedule.org"))
-			    (setq org-agenda-files '("/home/dave/Dropbox/org1/notebook.org" "/home/dave/Dropbox/org1/schedule.org" "/home/dave/Dropbox/org1/schedule.org_archive" "/home/dave/Dropbox/org1/birthdays.org"  "/home/dave/Dropbox/org1/events.org" "/home/dave/Dropbox/org1/work.org"))
-								    ;(lambda () (writeroom-mode 1)))
-			    (setq org-tags-exclude-from-inheritance '("time_booking"))
-			    (setq org-agenda-start-on-weekday 1)         ;; calendar begins today
-			    (setq org-agenda-start-day "1d")
-			    (setq org-agenda-clockreport-parameter-plist
-								    ;'(:scope file :maxlevel 3 :link t :properties ("Effort") :formula "$5='(- $1 $4);U::@1$1=string(\"Effort\")::@1$3=string(\"Total\")::@1$4=string(\"Task time\")" :formatter my-clocktable-write)
-								    ;'(:maxlevel 3) :properties ("Effort") :fileskip0 t :formatter my-clocktable-write :formula "$7='(- $2 $4);U::$8='(- $2 $5);U::$9='(- $2 $6);U" )
-				  '(:maxlevel 4 ;:properties ("Effort") :fileskip0 t :formatter my-clocktable-write :formula "$9='(- $3 $5);U::$10='(- $2 $6);U::$11='(- $2 $7);U::$12='(- $3 $8);U"
-					      )
-				  )
-
-			    (setq org-agenda-custom-commands
-								    ;	     (append org-agenda-custom-commands
-				  '(
-
-				    ("n" "all"
-				     (
-				      (agenda ""
-
-					      (                                                (org-agenda-span 7)                      ;; overview of appointments
-											       (calendar-week-start-day 0)
-											       (org-agenda-start-on-weekday 1)         ;; calendar begins today
-											       )
-					      )
-
-								    ;(tagst-odo "-personal")
-				      )
-
-				     )
-
-
-				    ("w" "work todos"
-				     (
-				      (agenda ""
-
-					      (
-					       (org-agenda-files '("/home/dave/Dropbox/org1/work.org" "/home/dave/Dropbox/org1/work.org_archive"))
-					       (org-agenda-span 7)                      ;; overview of appointments
-					       (calendar-week-start-day 0)
-					       (org-agenda-start-on-weekday 1)         ;; calendar begins today
-					       )
-					      )
-				      (tags-todo "work")
-								    ;(tagst-odo "-personal")
-				      )
-
-				     )
-
-
-				    ("i" "inbox todos"
-								    ; das ist fuer die todas
-				     (
-				      (agenda ""
-					      (
-					       (org-agenda-files '("/home/dave/Dropbox/org1/schedule.org" "/home/dave/Dropbox/org1/schedule.org_archive"))
-								    ;		  ;(org-agenda-sorting-strategy '(priority-up effort-down))
-					       (org-agenda-span 7)                      ;; overview of appointments
-					       (calendar-week-start-day 0)
-					       (org-agenda-start-on-weekday 1)         ;; calendar begins today)
-					       )
-					      )
-				      (tags-todo "inbox")
-				      )
-				     )
-				    )
-								    ;  )
-				  )
-
-
-
-								    ;(global-set-key (kbd "C-c l") #'org-store-link)
-								    ;(global-set-key (kbd "C-c a") #'org-agenda)
-								    ;(global-set-key (kbd "C-c c") #'org-capture)
-
-
-			    (defun doom--update-files (&rest files)
-			      "Ensure FILES are updated in `recentf', `magit' and `save-place'."
-			      (let (toplevels)
-				(dolist (file files)
-				  (when (featurep 'vc)
-				    (vc-file-clearprops file)
-				    (when-let (buffer (get-file-buffer file))
-				      (with-current-buffer buffer
-					(vc-refresh-state))))
-				  (when (featurep 'magit)
-				    (when-let (default-directory (magit-toplevel (file-name-directory file)))
-				      (cl-pushnew default-directory toplevels)))
-				  (unless (file-readable-p file)
-				    (when (bound-and-true-p recentf-mode)
-				      (recentf-remove-if-non-kept file))
-				    (when (and (bound-and-true-p projectile-mode)
-					       (doom-project-p)
-					       (projectile-file-cached-p file (doom-project-root)))
-				      (projectile-purge-file-from-cache file))))
-				(dolist (default-directory toplevels)
-				  (magit-refresh))
-				(when (bound-and-true-p save-place-mode)
-				  (save-place-forget-unreadable-files))))
-
-
-
-
-			    (defun doom/copy-this-file (new-path &optional force-p)
-			      "Copy current buffer's file to NEW-PATH.
-
-										  If FORCE-P, overwrite the destination file if it exists, without confirmation."
-
-			      (interactive
-			       (list (read-file-name "Copy file to: ")
-				     current-prefix-arg))
-			      (unless (and buffer-file-name (file-exists-p buffer-file-name))
-				(user-error "Buffer is not visiting any file"))
-			      (let ((old-path (buffer-file-name (buffer-base-buffer)))
-				    (new-path (expand-file-name new-path)))
-				(make-directory (file-name-directory new-path) 't)
-				(copy-file old-path new-path (or force-p 1))
-				(doom--update-files old-path new-path)
-				(message "File copied to %S" (abbreviate-file-name new-path))))
-
-
-
-			    (add-hook 'org-tab-first-hook
-				      ;; Only fold the current tree, rather than recursively
-				      #'+org-cycle-only-current-subtree-h)
-
-										  ;;;###autoload
-			    (defun +org-cycle-only-current-subtree-h (&optional arg)
-			      "Toggle the local fold at the point, and no deeper.
-										  `org-cycle's standard behavior is to cycle between three levels: collapsed,
-										  subtree and whole document. This is slow, especially in larger org buffer. Most
-										  of the time I just want to peek into the current subtree -- at most, expand
-										  ,*only* the current subtree.
-										  All my (performant) foldings needs are met between this and `org-show-subtree'
-										  (on zO for evil users), and `org-cycle' on shift-TAB if I need it."
-			      (interactive "P")
-			      (unless (or (eq this-command 'org-shifttab)
-					  (and (bound-and-true-p org-cdlatex-mode)
-					       (or (org-inside-LaTeX-fragment-p)
-						   (org-inside-latex-macro-p))))
-				(save-excursion ;(evil-switch-to-windows-last-buffer)
-				  (org-beginning-of-line)
-				  (let (invisible-p)
-				    (when (and (org-at-heading-p)
-					       (or org-cycle-open-archived-trees
-						   (not (member org-archive-tag (org-get-tags))))
-					       (or (not arg)
-						   (setq invisible-p (outline-invisible-p (line-end-position)))))
-				      (unless invisible-p
-					(setq org-cycle-subtree-status 'subtree))
-				      (org-cycle-internal-local)
-				      t)))))
-
-								    ;	       ;; set letters to bigger font size
-			    (set-face-attribute 'default nil :height 200)
-
-
-
-								    ;function, that could chang the margin
-								    ;(setq my-margin-left 50) ;; eval to change the left margin immediately.
-								    ;(setq my-margin-right 0) ;; eval to change the right margin immediately.
-								    ;
-								    ;(defun my-update-margins ()
-								    ;  (set-window-margins (get-buffer-window) my-margin-left my-margin-right))
-								    ;
-								    ;(add-hook 'window-configuration-change-hook 'my-update-margins)
-								    ;(add-hook 'window-state-change-hook 'my-update-margins)
-								    ;
-
-			    ;; find file preview
-			    (unless (package-installed-p 'vertico)
-			      (package-install 'vertico))
-
-			    (require 'vertico)
-
-			    (vertico-mode 1)
-
-								    ; find file preview last used in hours etc.
-										  ;;; `marginalia' is a package that we need to install.
-			    (unless (package-installed-p 'marginalia)
-			      (package-install 'marginalia))
-								    ;
-			    (require 'marginalia)
-								    ;
-			    (marginalia-mode 1)
-
-								    ;better regex search in find file
-			    (require 'orderless)
-			    (setq completion-styles '(orderless basic)
-				  completion-category-overrides '((file (styles basic partial-completion orderless))))
-
-			    ;; recentf stuff -> must be enabled for consult
-			    (require 'recentf)
-			    (recentf-mode 1)
-								    ;
-			    (unless (package-installed-p 'consult)
-			      (package-install 'consult))
-
-								    ; Example configuration for Consult - narrows for example in search-org-heading
-			    (use-package consult
-			      ;; Replace bindings. Lazily loaded due by `use-package'.
-			      :config
-			      (setq consult-narrow-key "<") ;; "C-+"
-								    ; (;; C-c bindings (mode-specific-map)
-								    ;("C-c M-x" . consult-mode-command)
-								    ;("C-c h" . consult-history)
-								    ;	 )
-			      )
-								    ;					;
-
-								    ;
-								    ;
-			    ;; *** Which key ***
-			    ;; shows shortcuts, when clicking C-x
-			    (add-to-list 'load-path "/Users/dave/.emacs.d/elpa/which-key-20220811.1616/which-key.el")
-			    (require 'which-key)
-			    (which-key-mode)
-			    ;; https://github.com/doomemacs/doomemacs/blob/master/modules/config/default/+evil-bindings.el
-
-								    ;  (:prefix-map ("f" . "file")
-								    ;       :desc "Open project editorconfig"   "c"   #'editorconfig-find-current-editorconfig
-								    ;       :desc "Copy this file"              "C"   #'doom/copy-this-file
-								    ;       :desc "Find directory"              "d"   #'+default/dired
-								    ;       :desc "Delete this file"            "D"   #'doom/delete-this-file
-								    ;       :desc "Find file in emacs.d"        "e"   #'doom/find-file-in-emacsd
-								    ;       :desc "Browse emacs.d"              "E"   #'doom/browse-in-emacsd
-								    ;       :desc "Find file"                   "f"   #'find-file
-								    ;       :desc "Find file from here"         "F"   #'+default/find-file-under-here
-								    ;       :desc "Locate file"                 "l"   #'locate
-								    ;       :desc "Find file in private config" "p"   #'doom/find-file-in-private-config
-								    ;       :desc "Browse private config"       "P"   #'doom/open-private-config
-								    ;       :desc "Recent files"                "r"   #'recentf-open-files
-								    ;       :desc "Rename/move file"            "R"   #'doom/move-this-file
-								    ;       :desc "Save file"                   "s"   #'save-buffer
-								    ;       :desc "Save file as..."             "S"   #'write-file
-								    ;       :desc "Sudo find file"              "u"   #'doom/sudo-find-file
-								    ;       :desc "Sudo this file"              "U"   #'doom/sudo-this-file
-								    ;       :desc "Yank file path"              "y"   #'+default/yank-buffer-path
-								    ;       :desc "Yank file path from project" "Y"   #'+default/yank-buffer-path-relative-to-project)
-
-			    (setq dave/file-map (make-sparse-keymap))
-			    (define-key dave/file-map "s" '("Save file" . save-buffer))
-			    (define-key dave/file-map "r" '("Open Recent files" . consult-recent-file))
-			    (define-key dave/file-map "f" '("find file" . find-file))
-			    (define-key dave/file-map "C" '("copy file" . doom/copy-this-file))
-			    (setq dave/search-map (make-sparse-keymap))
-			    (define-key dave/search-map "s" '("search-buffer" . consult-line))
-
-			    (setq dave/attach-map (make-sparse-keymap))
-			    (define-key dave/attach-map "p" '("attach" . org-download-clipboard))
-			    (setq dave/links-map (make-sparse-keymap))
-			    (define-key dave/links-map "s" '("store link" . org-store-link))
-
-			    (setq dave/org-map (make-sparse-keymap))
-			    (define-key dave/org-map "." '("search-heading" . consult-org-heading))
-			    (define-key dave/org-map "l" (cons "links" dave/links-map))
-			    (define-key dave/org-map "a" (cons "attachments" dave/attach-map))
-			    (setq dave/notes-map (make-sparse-keymap))
-			    (define-key dave/notes-map "a" '("agenda" . org-agenda))
-			    (setq dave/projectile-map (make-sparse-keymap))
-			    (define-key dave/projectile-map "p" '("switch to project" . projectile-switch-project))
-			    (define-key dave/projectile-map "a" '("add project" . projectile-add-known-project))
-			    (define-key dave/projectile-map "f" '("find file in project" . projectile-find-file))
-			    (setq dave/bindings-map (make-sparse-keymap))
-			    (define-key dave/bindings-map "t" '("bindings map" . which-key-show-top-level))
-			    (setq dave/help-map (make-sparse-keymap))
-			    (define-key dave/help-map "b" (cons "bindings" dave/bindings-map))
-
-			    (setq dave/my-map (make-sparse-keymap))
-			    (define-key dave/my-map "m" (cons "org" dave/org-map))
-			    (define-key dave/my-map "s" (cons "search" dave/search-map))
-			    (define-key dave/my-map "f" (cons "files" dave/file-map))
-			    (define-key dave/my-map "n" (cons "notes" dave/notes-map))
-			    (define-key dave/my-map "p" (cons "project" dave/projectile-map))
-			    (define-key dave/my-map "h" (cons "help" dave/help-map))
-			    (define-key dave/my-map "X" '("Capture" . dave/org-capture))
-
-			    ;;(define-key evil-normal-state-map (kbd "SPC") my-map)
-			    (global-set-key (kbd "C-c") dave/my-map)
-
-			    ;; *** Theme ***
-			    ;; nice theme
-			    (use-package doom-themes
-			      :ensure t
-			      :config
-			      ;; Global settings (defaults)
-			      (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-				    doom-themes-enable-italic t) ; if nil, italics is universally disabled
-			      (load-theme 'doom-one t)
-
-			      ;; Enable flashing mode-line on errors
-			      (doom-themes-visual-bell-config)
-			      ;; Enable custom neotree theme (all-the-icons must be installed!)
-								    ;(doom-themes-neotree-config)
-			      ;; or for treemacs users
-			      (setq doom-themes-treemacs-theme "doom-colors") ; use "doom-colors" for less minimal icon theme
-			      (doom-themes-treemacs-config)
-			      ;; Corrects (and improves) org-mode's native fontification.
-			      (doom-themes-org-config))
-
-
-			    (add-to-list 'load-path "/home/dave/.emacs.d/myloadpath/zen-mode")
-			    (require 'zen-mode)
-			    (global-set-key (kbd "C-M-z") 'zen-mode)
-
-
-			    ;; Prot NOTE 2023-03-24: This is old code.  I want to rewrite it.  The
-			    ;; idea is to bind `prot-simple-mark-construct-dwim' to a convenient
-			    ;; key.  I use C-M-SPC.
-			    (defmacro prot-simple-mark (name object &optional docstring)
-			      "Produce function for marking small syntactic constructs.
-				       NAME is how the function should be called.  OBJECT is its scope.
-				       Optional DOCSTRING describes the resulting function.
-
-				       This is a slightly modified version of the built-in `mark-word'."
-			      `(defun ,name (&optional arg allow-extend)
-				 ,docstring
-				 (interactive "P\np")
-				 (let ((x (format "%s-%s" "forward" ,object)))
-				   (cond ((and allow-extend
-					       (or (and (eq last-command this-command) (mark t))
-						   (region-active-p)))
-					  (setq arg (if arg (prefix-numeric-value arg)
-						      (if (< (mark) (point)) -1 1)))
-					  (set-mark
-					   (save-excursion
-					     (goto-char (mark))
-					     (funcall (intern x) arg)
-					     (point))))
-					 (t
-					  (let ((bounds (bounds-of-thing-at-point (intern ,object))))
-					    (unless (consp bounds)
-					      (user-error "No %s at point" ,object))
-					    (if (>= (prefix-numeric-value arg) 0)
-						(goto-char (car bounds))
-					      (goto-char (cdr bounds)))
-					    (push-mark
-					     (save-excursion
-					       (funcall (intern x) (prefix-numeric-value arg))
-					       (point)))
-					    (activate-mark)))))))
-
-			    (prot-simple-mark
-			     prot-simple-mark-word
-			     "word"
-			     "Mark the whole word at point.
-				       This function is a slightly modified version of the built-in
-				       `mark-word', that I intend to use only in special circumstances,
-				       such as when recording a keyboard macro where precision is
-				       required.  For a general purpose utility, use `prot-simple-mark-symbol'
-				       instead.")
-
-			    (prot-simple-mark
-			     prot-simple-mark-symbol
-			     "symbol"
-			     "Mark the whole symbol at point.
-				       With optional ARG, mark the current symbol and any remaining
-				       ARGth symbols away from point.  A negative argument moves
-				       backward. Repeated invocations of this command mark the next
-				       symbol in the direction originally specified.
-
-				       In the absence of a symbol and if a word is present at point,
-				       this command will operate on it as described above.")
-
-				       ;;;###autoload
-			    (defun prot-simple-mark-sexp-backward (&optional arg)
-			      "Mark previous or ARGth balanced expression[s].
-				       Just a convenient backward-looking `mark-sexp'."
-			      (interactive "P")
-			      (if arg
-				  (mark-sexp (- arg) t)
-				(mark-sexp (- 1) t)))
-
-				       ;;;###autoload
-			    (defun prot-simple-mark-construct-dwim (&optional arg)
-			      "Mark symbol or balanced expression at point.
-				       A do-what-I-mean wrapper for `prot-simple-mark-sexp-backward',
-				       `mark-sexp', and `prot-simple-mark-symbol'.
-
-				       When point is over a symbol, mark the entirety of it.  Regular
-				       words are interpreted as symbols when an actual symbol is not
-				       present.
-
-				       For balanced expressions, a backward match will happen when point
-				       is to the right of the closing delimiter.  A forward match is the
-				       fallback condition and should work when point is before a
-				       balanced expression, with or without whitespace in between it an
-				       the opening delimiter.
-
-				       Optional ARG will mark a total of ARGth objects while counting
-				       the current one (so 3 would be 1+2 more).  A negative count moves
-				       the mark backward (though that would invert the backward-moving
-				       sexp matching of `prot-simple-mark-sexp-backward', so be mindful of
-				       where the point is).  Repeated invocations of this command
-				       incrementally mark objects in the direction originally
-				       specified."
-			      (interactive "P")
-			      (cond
-			       ((symbol-at-point)
-				(prot-simple-mark-symbol arg t))
-			       ((eq (point) (cdr (bounds-of-thing-at-point 'sexp)))
-				(prot-simple-mark-sexp-backward arg))
-			       (t
-				(mark-sexp arg t)))) 
-
-
-			    (custom-set-variables
-			     ;; custom-set-variables was added by Custom.
-			     ;; If you edit it by hand, you could mess it up, so be careful.
-			     ;; Your init file should contain only one such instance.
-			     ;; If there is more than one, they won't work right.
-			     '(doom-modeline-minor-modes t)
-								    ; show images in org mode
-			     '(org-startup-with-inline-images t)
-			     '(package-selected-packages
-			       '(embark zen-mode counsel ivy org-superstar evil-org org-modern evil-visual-mark-mode evil)))
-			    (custom-set-faces
-			     ;; custom-set-faces was added by Custom.
-			     ;; If you edit it by hand, you could mess it up, so be careful.
-			     ;; Your init file should contain only one such instance.
-			     ;; If there is more than one, they won't work right.
-			     )
-			    (put 'downcase-region 'disabled nil)
-
-			    ;; commented evil *** Evil mode ***
-
-			    ;; Download Evil
-			    ;;(unless (package-installed-p 'evil)
-			    ;;(package-install 'evil))
-			    ;; needs to be before require evil
-			    ;;(setq evil-want-C-u-scroll t) ;; scroll with C-u
-			    ;;(setq evil-want-C-i-jump nil) ;; tab in org mode
-
-			    ;; Enable Evil
-			    ;;(require 'evil)
-			    ;;(evil-mode  0)
-
-			    ;;Exit insert mode by pressing j and then j quickly
-			    ;;(setq key-chord-two-keys-delay 0.5)
-			    ;;(key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
-			    ;;(key-chord-mode 0)
-
-
-	#+END_SRC
+
+
+
 
 
