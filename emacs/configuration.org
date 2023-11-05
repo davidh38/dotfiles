@@ -365,22 +365,27 @@ REPL for clojure
 * Emacs 29.1
 Magit is included in 29.2
 #+BEGIN_SRC emacs-lisp
-  
-  (use-package projectile :ensure t)
 
-  (use-package magit
-         :ensure t)
-  (use-package magit-section
-         :ensure t)
+    (if (string= (substring (emacs-version) 0 14) "GNU Emacs 29.1")
+         (use-package projectile :ensure t)
+      (use-package magit
+             :ensure t)
+      (use-package magit-section
+             :ensure t)
+      )
 
-       ;;       ,*** roam only 29.2
-       ;;                                                                  org roam
-       ;;		      (use-package org-roam :ensure t)
-       ;; first set			  org-roam
-       ;;			     (setq org-roam-directory (file-truename
-       ;;			  (concat my-homedir "/Dropbox/org-roam")))
-       ;;			  (org-roam-db-autosync-mode) ;; *** Which key ***
+
+           ;;       ,*** roam only 29.2
+           ;;                                                                  org roam
+           ;;		      (use-package org-roam :ensure t)
+           ;; first set			  org-roam
+           ;;			     (setq org-roam-directory (file-truename
+           ;;			  (concat my-homedir "/Dropbox/org-roam")))
+           ;;			  (org-roam-db-autosync-mode) ;; *** Which key ***
 
 #+END_SRC
+
+#+RESULTS:
+: test1
 
 
