@@ -1,399 +1,386 @@
-
-* test this 
+* Fade out menu bar and tool bar
+save space by not showing the menu bar
 #+BEGIN_SRC emacs-lisp
-                                                                          ;;                        ;; first steps:
-                                                                          ;;                        ;; package-install which-key ->
-                                                                          ;;                    ;;can not be installed via use-package
-                                                                          ;;                        ;; M-x: nerd-icons-install-fonts for doomline
-                                                                          ;;                    ;(all-the-icons must be installed!)
-
-
-          ;;       shows the key bindings for commands.
-                                                                                           (menu-bar-mode 1)
-                                                                                           ;; Disable the icons that are shown at the top of the Emacs window.
-
-            ;;       We do not need them because we already have the global menu bar.
-                                                                                           (tool-bar-mode -1)
-                                                                                           ;; keep the scroll bar enabled for the time being.  It helps if you
-                                                                                                                                                            ;; intend to use the mouse
-                                                                                           ;;(might be needed if you try the Emacs
-                                                                                                                                                            ;; keys)
-                                                                                           (scroll-bar-mode 1)
-
-
-                                                                             (require 'epa-file)
-                                                                           (epa-file-enable)
-
-                                                           (require 'package)
-                                                           (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-                                                           (add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/"))
-
-
-                                                           ;;Macos/Linux Setup
-                                                              (if (eq system-type 'darwin)
-                                                             (progn (defvar my-homedir "/Users/dave")
-                                                                 ; use s-SPC with shift for mark command
-                                                             (global-set-key (kbd "s-SPC") 'set-mark-command))
-                                                       ; all other os use /home/dave
-                                                           (defvar my-homedir "/home/dave"))
-
-
-
-
-
-                                                                                             ;; *** Theme ***
-                                                                                             (use-package doom-themes
-                                                                                                                                                                            :ensure t
-                                                                                                                                                                            :config
-                                                                                             (setq doom-themes-enable-bold t
-                                                                   ; if nil, bold is universally disabled
-                                                                                         doom-themes-enable-italic t)
-                                                                                             ; if nil, italics is universally disabled
-                                                                                             (load-theme 'doom-one t)
-                                                                                             ;; Enable flashing mode-line on errors
-                                                                                             (doom-themes-visual-bell-config)
-
-                                                                                             ;; or for treemacs users
-                                                                                             (setq doom-themes-treemacs-theme "doom-colors")
-                                                                                             ; use "doom-colors" for less minimal icon theme
-                                                                                             (doom-themes-treemacs-config)
-                                                                                             ;; Corrects
-                                                                                           ;;  org-mode's native fontification.
-                                                                                             (doom-themes-org-config))
-                                                                                             ; doom line looks much nicer
-                                                                                                                                              ; remember to install nerd fonts nerd-icons-install-fonts
-                                                                                             (use-package all-the-icons
-                                                                                                     :ensure t)
-                                                                                             (use-package
-                                                                                               doom-modeline
-                                                                                                       :ensure t
-                                                                                                 :init
-                                                                                             (doom-modeline-mode 1))
-
-
-
-        ;;                                                                                   ,,*** Clojure ***
-                                                                              (use-package clojure-mode
-                                                                                                       :ensure t
-                                                                                                                                            )
-                                                                                             ; repl for clojure
-                                                                                             (unless
-                                                                                             (package-installed-p 'cider)
-                                                                                             (package-install 'cider))
-                                                                                             ;; keep the menu bar visible.  The menu bar includes entries like
-                                                                                                                                                              ;; "File" and "Buffers".  It can be helpful at this early stage as it
-                                                                          ;;
-
-
-
-                          (use-package which-key :ensure t)
-                         (which-key-mode 1)
-                             ;; shows shortcuts, when clicking C-x
-
-                                                                                             (setq dave/file-map
-                                                                                             (make-sparse-keymap))
-                                                                                             ;
-                                                                                             (define-key dave/file-map "s"
-                                                                                             '("Save file" . save-buffer))
-                                                                                             (define-key dave/file-map "r"
-                                                                                             '("Open Recent files" . consult-recent-file))
-                                                                                             ;
-                                                                                             (define-key dave/file-map "f"
-                                                                                             '("find file" . find-file))
-                                                                                             ;
-                                                                                             (define-key dave/file-map "C"
-                                                                                             '("copy file" . doom/copy-this-file))
-                                                                                             (setq dave/search-map
-                                                                                             (make-sparse-keymap))
-                                                                                             (define-key dave/search-map "s"
-                                                                                             '("search-buffer" . consult-line))
-                                                                                             ;
-                                                                                             (setq dave/attach-map
-                                                                                             (make-sparse-keymap))
-                                                                                             ;
-                                                                                             (define-key dave/attach-map "p"
-                                                                                             '("attach" . org-download-clipboard))
-                                                                                             ;
-                                                                                             (setq dave/links-map
-                                                                                             (make-sparse-keymap))
-                                                                                             ;
-                                                                                             (define-key dave/links-map "s"
-                                                                                             '("store link" . org-store-link))
-                                                                                             (setq dave/org-map
-                                                                                             (make-sparse-keymap))
-                                                                                             (define-key dave/org-map "."
-                                                                                             '("search-heading" . consult-org-heading))
-                                                                                             ;
-                                                                                             (define-key dave/org-map "l"
-                                                                                             (cons "links" dave/links-map))
-                                                                                             ;
-                                                                                             (define-key dave/org-map "a"
-                                                                                             (cons "attachments" dave/attach-map))
-                                                                                             (setq dave/notes-map
-                                                                                             (make-sparse-keymap))
-                                                                                             (define-key dave/notes-map "a"
-                                                                                             '("agenda" . org-agenda))
-                                                                                             ;
-                                                                                             (setq dave/projectile-map
-                                                                                             (make-sparse-keymap))
-                                                                                             ;
-                                                                                             (define-key dave/projectile-map "p"
-                                                                                             '("switch to project" . projectile-switch-project))
-                                                                                             ;
-                                                                                             (define-key dave/projectile-map "a"
-                                                                                             '("add project" . projectile-add-known-project))
-                                                                                             ;
-                                                                                             (define-key dave/projectile-map "f"
-                                                                                           '("find file in project" . projectile-find-file))
-                                                                                             ;
-                                                                                             (setq dave/bindings-map
-                                                                                             (make-sparse-keymap))
-
-
-                                                                                             ;
-                                                                                             (define-key dave/bindings-map "t"
-                                                                                             '("bindings map" . which-key-show-top-level))
-                                                                                             ;
-                                                                                             (setq dave/help-map
-                                                                                             (make-sparse-keymap))
-                                                                                             ;
-                                                                                             (define-key dave/help-map "b"
-                                                                                             (cons "bindings" dave/bindings-map))
-                                                                                             (setq dave/my-map
-                                                                                             (make-sparse-keymap))
-                                                                                             (define-key dave/my-map "m"
-                                                                                             (cons "org" dave/org-map))
-                                                                                             (define-key dave/my-map "s"
-                                                                                             (cons "search" dave/search-map))
-                                                                                             (define-key dave/my-map "f"
-                                                                                             (cons "files" dave/file-map))
-                                                                                             ;
-                                                                                             (define-key dave/my-map "n"
-                                                                                             (cons "notes" dave/notes-map))
-                                                                                             ;
-                                                                                             (define-key dave/my-map "p"
-                                                                                             (cons "project" dave/projectile-map))
-                                                                                             ;
-                                                                                             (define-key dave/my-map "h"
-                                                                                             (cons "help" dave/help-map))
-                                                                                             ;
-                                                                                             (define-key dave/my-map "X"
-                                                                                             '("Capture" . dave/org-capture))
-                                                                                             ;(define-key evil-normal-state-map
-
-                                                                                             (global-set-key
-                                                                                             (kbd "C-c")
-                                                                                             dave/my-map)
-
-
-                   ;;                    ;; m-x preview /  find file preview
-                                                                                             (unless
-                                                                                             (package-installed-p 'vertico)
-                                                                                             (package-install 'vertico))
-                                                                                             (require 'vertico)
-                                                                                             (vertico-mode 1)
-                                                                                             ; find file preview last used in hours etc.
-                                                                                                                                                                                               ;;; `marginalia' is a package that we need to install.
-                                                                                             (unless
-                                                                                             (package-installed-p 'marginalia)
-                                                                                             (package-install 'marginalia))
-                                                                                             ;
-                                                                                             (require 'marginalia)
-                                                                                             ;
-                                                                                             (marginalia-mode 1)
-                                                                                             ;better regex search in find file / recentfile / m-x
-                                                                                             (unless
-                                                                                             (package-installed-p 'orderless)
-                                                                                             (package-install 'orderless))
-                                                                                             (require 'orderless)
-                                                                                             (setq completion-styles
-                                                                                             '(orderless basic)
-                                                                                             completion-category-overrides
-                                                                                             '((file
-                                                                                             (styles basic partial-completion orderless))))
-
-
-                                                                                           (unless
-                                                                                           (package-installed-p 'consult)
-                                                                                           (package-install 'consult))
-                                                                                           (use-package consult
-                                                                                                                                             ;; Replace bindings. Lazily loaded due by `use-package'.
-                                                                                                                                             :config
-                                                                                           (setq consult-narrow-key "<")
-                                                                                           ;; "C-+"
-                                                                                                                                                                                   ;
-                                                                                       ;    (mode-specific-map)
-                                                                                           ;("C-c M-x" . consult-mode-command)
-                                                                                           ;("C-c h" . consult-history)
-                                                                                           ;	 )
-
-                                                                                           )
-
-                                                                                             ;;must be enabled for consult
-                                                                                             (require 'recentf)
-                                                                                             (recentf-mode 1)
-
-
-                  ;*** org mode
-                                                                                              (setq org-attach-id-dir
-                                                                                             (concat my-homedir "/Dropbox/org/.attach/"))
-                                                                                             (setq org-attach-set-directory
-                                                                                             (concat my-homedir "/Dropbox/org/.attach/"))
-
-
-                                                                                             (unless
-                                                                                                 (package-installed-p 'org-download)
-                                                                                               (package-install 'org-download)
-                                                                                                  )
-                 (require 'org-download)
-
-                                                                                           (setq org-image-actual-width 800)									;(with-eval-after-load 'org
-                ;  (org-download-enable) not really needed
-                                                                                             ;
-                                                                                           (setq org-adapt-indentation t)
-              (setq org-startup-indented t)
-
-
-
-                                                                        ;;                                                                                  ;(global-set-key (kbd "C-c l") #'org-store-link)
-                                                                        ;;                                                                                  ;(global-set-key (kbd "C-c a") #'org-agenda)
-                                                                        ;;                                                                                  ;(global-set-key (kbd "C-c c") #'org-capture)
-
-
-                                                                            (setq   org-highest-priority ?A
-                                                                                                                org-default-priority ?B
-                                                                                                                org-lowest-priority ?D
-                                                                                                                org-priority-faces '((?A :foreground "#DC143C" :weight bold)
-                                                                                                                                     (?B :foreground "#E76E34" :weight bold)
-                                                                                                                                     (?C :foreground "#D8A743" :weight bold)
-                                                                                                                                     (?D :foreground "#3BAB60" :weight bold))
-                                                                                                                )
-
-                                                                                                        (setq org-todo-keywords
-                                                                                                              '((sequence "TODO" "|" "DONE" "KILL")))
-
-
-
-                                                                        ;;   ; new line at 120 
-                                                                          (add-hook 'org-mode-hook '(lambda () (setq fill-column 120)))
-                                                                          (add-hook 'org-mode-hook 'turn-on-auto-fill)
-
-
-
-
-
-                                                                                             ; consult for consult open recent file
-
-                                                                              (setq org-agenda-skip-function-global 
-                                                                                  '(org-agenda-skip-entry-if 'todo '("DONE" "KILL")))
-
-                                                                                        (setq org-agenda-files
-                                                                                              (list
-
-                                                                                       (concat my-homedir "/Dropbox/org/schedule.org") (concat my-homedir "/Dropbox/org/schedule.org_archive") (concat my-homedir "/Dropbox/org/birthdays.org")  (concat my-homedir "/Dropbox/org/events.org") (concat my-homedir "/Dropbox/org/work.org")
-                                                                               )
-                                                                                )
-
-
-
-                                                                                                                  ;(concat my-homedir "/Dropbox/org/schedule.org") (concat my-homedir "/home/dave/Dropbox/org/schedule.org_archive") (concat my-homedir "/Dropbox/org/birthdays.org")  (concat my-homedir "/Dropbox/org/events.org") (concat my-homedir "/Dropbox/org/work.org"))))
-                                                                                                                                                           ;(lambda () (writeroom-mode 1)))
-                                                                                                                   (setq org-tags-exclude-from-inheritance '("time_booking"))
-                                                                                                                   (setq org-agenda-start-on-weekday 1)         ;; calendar begins today
-                                                                                                                   (setq org-agenda-start-day "1d")
-
-                                                                                                                   (setq org-agenda-clockreport-parameter-plist
-                                                                                                                                                           ;'(:scope file :maxlevel 3 :link t :properties ("Effort") :formula "$5='(- $1 $4);U::@1$1=string(\"Effort\")::@1$3=string(\"Total\")::@1$4=string(\"Task time\")" :formatter my-clocktable-write)
-                                                                                                                                                           ;'(:maxlevel 3) :properties ("Effort") :fileskip0 t :formatter my-clocktable-write :formula "$7='(- $2 $4);U::$8='(- $2 $5);U::$9='(- $2 $6);U" )
-                                                                                                                         '(:maxlevel 4 ;:properties ("Effort") :fileskip0 t :formatter my-clocktable-write :formula "$9='(- $3 $5);U::$10='(- $2 $6);U::$11='(- $2 $7);U::$12='(- $3 $8);U"
-                                                                                                                                     )
-                                                                                                                         )
-
-                                                                                                                   (setq org-agenda-custom-commands
-                                                                                                                                                           ;	     (append org-agenda-custom-commands
-                                                                                                                         '(
-
-                                                                                                                           ("n" "all"
-                                                                                                                            (
-                                                                                                                             (agenda ""
-
-                                                                                                                                     (                                                (org-agenda-span 7)                      ;; overview of appointments
-                                                                                                                                                                                      (calendar-week-start-day 0)
-                                                                                                                                                                                       (org-agenda-start-on-weekday 1)         ;; calendar begins today
-                                                                                                                                                                                      (org-agenda-include-inactive-timestamp t)
-                                                                                                                                                                                      )
-                                                                                                                                     )
-
-                                                                                                                                                           ;(tagst-odo "-personal")
-                                                                                                                             )
-
-                                                                                                                            )
-
-
-                                                                                                                           ("w" "work todos"
-                                                                                                                            (
-                                                                                                                             (agenda ""
-
-                                                                                                                                     (
-
-
-                                                                                                                                      (org-agenda-files (list (concat my-homdir "/Dropbox/org/work.org") (concat my-homedir "/Dropbox/org/work.org_archive")))
-
-                                                                                                                                      (org-agenda-span 7)                      ;; overview of appointments
-                                                                                                                                      (calendar-week-start-day 0)
-                                                                                                                                      (org-agenda-start-on-weekday 1)         ;; calendar begins today
-                                                                                                                                      )
-                                                                                                                                     )
-                                                                                                                             (tags-todo "work")
-                                                                                                                                                           ;(tagst-odo "-personal")
-                                                                                                                             )
-
-                                                                                                                            )
-
-
-                                                                                                                           ("i" "inbox todos"
-                                                                                                                                                           ; das ist fuer die todas
-                                                                                                                            (
-                                                                                                                             (agenda ""
-                                                                                                                                     (
-                                                                                                                                      (org-agenda-files (list (concat my-homedir "/Dropbox/org/schedule.org") (concat my-homedir "/Dropbox/org/schedule.org_archive")))
-                                                                                                                                                           ;		  ;(org-agenda-sorting-strategy '(priority-up effort-down))
-                                                                                                                                      (org-agenda-span 7)                      ;; overview of appointments
-                                                                                                                                      (calendar-week-start-day 0)
-                                                                                                                                      (org-agenda-start-on-weekday 1)         ;; calendar begins today)
-
-                                                                                                                                      )
-                                                                                                                                     )
-                                                                                                                             (tags-todo "inbox")
-                                                                                                                             )
-                                                                                                                            )
-                                                                                                                           )
-                                                                                                                                                           ;  )
-                                                                                                                          )
-
-    ;; magit only in 29.2
-(use-package projectile :ensure t)
+  (menu-bar-mode 0)
+#+END_SRC
+
+save space by not showing the tool bar 
+#+BEGIN_SRC emacs-lisp
+  (tool-bar-mode 0)
+#+END_SRC
+
+* Melpa and Elpa
+add packages to retrieve packages =package-install= from other repositories
+#+BEGIN_SRC emacs-lisp
+  (require 'package)
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+  (add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/"))
+#+END_SRC
+* Define home directory
+Macos/Linux Setuwhen
+When using macoss, use s-SPC with shift for mark command
+#+BEGIN_SRC emacs-lisp
+  (if (eq system-type 'darwin)
+      (defvar my-homedir "/Users/dave")
+    
+    
+                                         ; all other os use /home/dave
+    (defvar my-homedir "/home/dave"))
+
+#+END_SRC
+* Doom Theme
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-themes
+    :ensure t
+    :config
+    (setq doom-themes-enable-bold t
+                                          ; if nil, bold is universally disabled
+          doom-themes-enable-italic t)
+                                          ; if nil, italics is universally disabled
+    (load-theme 'doom-one t)
+    ;; Enable flashing mode-line on errors
+    (doom-themes-visual-bell-config)
+
+    ;; Corrects
+    ;;  org-mode's native fontification.
+    (doom-themes-org-config))
+                                          ; doom line looks much nicer
+                                          ; remember to install nerd fonts nerd-icons-install-fonts
+  (nerd-icons-install-fonts)
+  (use-package all-the-icons
+    :ensure t)
+
+  (use-package
+    doom-modeline
+    :ensure t
+    :init
+    (doom-modeline-mode 1))
+
+#+END_SRC
+* Clojure
+#+BEGIN_SRC emacs-lisp
+  (use-package clojure-mode
+    :ensure t
+    )
+#+END_SRC
+REPL for clojure
+#+BEGIN_SRC emacs-lisp
+  (unless
+    (package-installed-p 'cider)
+    (package-install 'cider))
+
+#+END_SRC
+* Which key 
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key :ensure t)
+  (which-key-mode 1)
+#+END_SRC
+* Which key map
+#+BEGIN_SRC emacs-lisp
+  ;; shows shortcuts, when clicking C-x
+  (setq dave/file-map
+        (make-sparse-keymap))
+                                          ;
+  (define-key dave/file-map "s"
+              '("Save file" . save-buffer))
+  (define-key dave/file-map "r"
+              '("Open Recent files" . consult-recent-file))
+                                          ;
+  (define-key dave/file-map "f"
+              '("find file" . find-file))
+                                          ;
+  (define-key dave/file-map "C"
+              '("copy file" . doom/copy-this-file))
+  (setq dave/search-map
+        (make-sparse-keymap))
+  (define-key dave/search-map "s"
+              '("search-buffer" . consult-line))
+                                          ;
+  (setq dave/attach-map
+        (make-sparse-keymap))
+                                          ;
+  (define-key dave/attach-map "p"
+              '("attach" . org-download-clipboard))
+                                          ;
+  (setq dave/links-map
+        (make-sparse-keymap))
+                                          ;
+  (define-key dave/links-map "s"
+              '("store link" . org-store-link))
+  (setq dave/org-map
+        (make-sparse-keymap))
+  (define-key dave/org-map "."
+              '("search-heading" . consult-org-heading))
+                                          ;
+  (define-key dave/org-map "l"
+              (cons "links" dave/links-map))
+                                          ;
+  (define-key dave/org-map "a"
+              (cons "attachments" dave/attach-map))
+  (setq dave/notes-map
+        (make-sparse-keymap))
+  (define-key dave/notes-map "a"
+              '("agenda" . org-agenda))
+                                          ;
+  (setq dave/projectile-map
+        (make-sparse-keymap))
+                                          ;
+  (define-key dave/projectile-map "p"
+              '("switch to project" . projectile-switch-project))
+                                          ;
+  (define-key dave/projectile-map "a"
+              '("add project" . projectile-add-known-project))
+                                          ;
+  (define-key dave/projectile-map "f"
+              '("find file in project" . projectile-find-file))
+                                          ;
+  (setq dave/bindings-map
+        (make-sparse-keymap))
+
+
+                                          ;
+  (define-key dave/bindings-map "t"
+              '("bindings map" . which-key-show-top-level))
+                                          ;
+  (setq dave/help-map
+        (make-sparse-keymap))
+                                          ;
+  (define-key dave/help-map "b"
+              (cons "bindings" dave/bindings-map))
+  (setq dave/my-map
+        (make-sparse-keymap))
+  (define-key dave/my-map "m"
+              (cons "org" dave/org-map))
+  (define-key dave/my-map "s"
+              (cons "search" dave/search-map))
+  (define-key dave/my-map "f"
+              (cons "files" dave/file-map))
+                                          ;
+  (define-key dave/my-map "n"
+              (cons "notes" dave/notes-map))
+                                          ;
+  (define-key dave/my-map "p"
+              (cons "project" dave/projectile-map))
+                                          ;
+  (define-key dave/my-map "h"
+              (cons "help" dave/help-map))
+                                          ;
+  (define-key dave/my-map "X"
+              '("Capture" . dave/org-capture))
+                                          ;(define-key evil-normal-state-map
+
+  (global-set-key
+   (kbd "C-c")
+   dave/my-map)
+
+#+END_SRC
+* Search in Emacs 
+#+BEGIN_SRC emacs-lisp
+  ;;                    ;; m-x preview /  find file preview
+  (unless
+      (package-installed-p 'vertico)
+    (package-install 'vertico))
+  (require 'vertico)
+  (vertico-mode 1)
+                                          ; find file preview last used in hours etc.
+                                                                                                                                                                                                   ;;; `marginalia' is a package that we need to install.
+  (unless
+      (package-installed-p 'marginalia)
+    (package-install 'marginalia))
+                                          ;
+  (require 'marginalia)
+                                          ;
+  (marginalia-mode 1)
+                                          ;better regex search in find file / recentfile / m-x
+  (unless
+      (package-installed-p 'orderless)
+    (package-install 'orderless))
+  (require 'orderless)
+  (setq completion-styles
+        '(orderless basic)
+        completion-category-overrides
+        '((file
+           (styles basic partial-completion orderless))))
+
+
+  (unless
+      (package-installed-p 'consult)
+    (package-install 'consult))
+  (use-package consult
+    ;; Replace bindings. Lazily loaded due by `use-package'.
+    :config
+    (setq consult-narrow-key "<")
+    ;; "C-+"
+                                          ;
+                                          ;    (mode-specific-map)
+                                          ;("C-c M-x" . consult-mode-command)
+                                          ;("C-c h" . consult-history)
+                                          ;	 )
+
+    )
+
+  ;;must be enabled for consult
+  (require 'recentf)
+  (recentf-mode 1)
+
+  #+END_SRC
+* Org mode 
+#+BEGIN_SRC emacs-lisp
+     (setq org-attach-id-dir
+           (concat my-homedir "/Dropbox/org/.attach/"))
+     (setq org-attach-set-directory
+           (concat my-homedir "/Dropbox/org/.attach/"))
+
+     (unless
+         (package-installed-p 'org-download)
+       (package-install 'org-download)
+       )
+     (require 'org-download)
+     (setq org-image-actual-width 800)									;(with-eval-after-load 'org
+                                             ;  (org-download-enable) not really needed
+
+     (setq org-adapt-indentation t)
+     (setq org-startup-indented t)
+
+     ;;                                                                                  ;(global-set-key (kbd "C-c l") #'org-store-link)
+     ;;                                                                                  ;(global-set-key (kbd "C-c a") #'org-agenda)
+     ;;                                                                                  ;(global-set-key (kbd "C-c c") #'org-capture)
+
+
+     (setq   org-highest-priority ?A
+             org-default-priority ?B
+             org-lowest-priority ?D
+             org-priority-faces '((?A :foreground "#DC143C" :weight bold)
+                                  (?B :foreground "#E76E34" :weight bold)
+                                  (?C :foreground "#D8A743" :weight bold)
+                                  (?D :foreground "#3BAB60" :weight bold))
+             )
+
+     (setq org-todo-keywords
+           '((sequence "TODO" "|" "DONE" "KILL")))
+
+
+
+     ;;   ; new line at 120
+     (add-hook 'org-mode-hook '(lambda () (setq fill-column 120)))
+     (add-hook 'org-mode-hook 'turn-on-auto-fill)
+
+                                             ; consult for consult open recent file
+#+END_SRC
+* Org-agenda
+#+BEGIN_SRC emacs-lisp
+     (setq org-agenda-skip-function-global
+           '(org-agenda-skip-entry-if 'todo '("DONE" "KILL")))
+
+     (setq org-agenda-files
+           (list
+
+            (concat my-homedir "/Dropbox/org/schedule.org") (concat my-homedir "/Dropbox/org/schedule.org_archive") (concat my-homedir "/Dropbox/org/birthdays.org")  (concat my-homedir "/Dropbox/org/events.org") (concat my-homedir "/Dropbox/org/work.org")
+            )
+           )
+
+
+
+                                             ;(concat my-homedir "/Dropbox/org/schedule.org") (concat my-homedir "/home/dave/Dropbox/org/schedule.org_archive") (concat my-homedir "/Dropbox/org/birthdays.org")  (concat my-homedir "/Dropbox/org/events.org") (concat my-homedir "/Dropbox/org/work.org"))))
+                                             ;(lambda () (writeroom-mode 1)))
+     (setq org-tags-exclude-from-inheritance '("time_booking"))
+     (setq org-agenda-start-on-weekday 1)         ;; calendar begins today
+     (setq org-agenda-start-day "1d")
+
+     (setq org-agenda-clockreport-parameter-plist
+                                             ;'(:scope file :maxlevel 3 :link t :properties ("Effort") :formula "$5='(- $1 $4);U::@1$1=string(\"Effort\")::@1$3=string(\"Total\")::@1$4=string(\"Task time\")" :formatter my-clocktable-write)
+                                             ;'(:maxlevel 3) :properties ("Effort") :fileskip0 t :formatter my-clocktable-write :formula "$7='(- $2 $4);U::$8='(- $2 $5);U::$9='(- $2 $6);U" )
+           '(:maxlevel 4 ;:properties ("Effort") :fileskip0 t :formatter my-clocktable-write :formula "$9='(- $3 $5);U::$10='(- $2 $6);U::$11='(- $2 $7);U::$12='(- $3 $8);U"
+                       )
+           )
+
+     (setq org-agenda-custom-commands
+                                             ;	     (append org-agenda-custom-commands
+           '(
+
+             ("n" "all"
+              (
+               (agenda ""
+
+                       (                                                (org-agenda-span 7)                      ;; overview of appointments
+                                                                        (calendar-week-start-day 0)
+                                                                        (org-agenda-start-on-weekday 1)         ;; calendar begins today
+                                                                        (org-agenda-include-inactive-timestamp t)
+                                                                        )
+                       )
+
+                                             ;(tagst-odo "-personal")
+               )
+
+              )
+
+
+             ("w" "work todos"
+              (
+               (agenda ""
+
+                       (
+
+
+                        (org-agenda-files (list (concat my-homdir "/Dropbox/org/work.org") (concat my-homedir "/Dropbox/org/work.org_archive")))
+
+                        (org-agenda-span 7)                      ;; overview of appointments
+                        (calendar-week-start-day 0)
+                        (org-agenda-start-on-weekday 1)         ;; calendar begins today
+                        )
+                       )
+               (tags-todo "work")
+                                             ;(tagst-odo "-personal")
+               )
+
+              )
+
+
+             ("i" "inbox todos"
+                                             ; das ist fuer die todas
+              (
+               (agenda ""
+                       (
+                        (org-agenda-files (list (concat my-homedir "/Dropbox/org/schedule.org") (concat my-homedir "/Dropbox/org/schedule.org_archive")))
+                                             ;		  ;(org-agenda-sorting-strategy '(priority-up effort-down))
+                        (org-agenda-span 7)                      ;; overview of appointments
+                        (calendar-week-start-day 0)
+                        (org-agenda-start-on-weekday 1)         ;; calendar begins today)
+
+                        )
+                       )
+               (tags-todo "inbox")
+               )
+              )
+             )
+                                             ;  )
+           )
+
+#+END_SRC
+* Encryption 
+#+BEGIN_SRC emacs-lisp
+  (require 'epa-file)
+  (epa-file-enable)  
+#+END_SRC
+* Emacs 29.1
+Magit is included in 29.2
+#+BEGIN_SRC emacs-lisp
+  
+  (use-package projectile :ensure t)
 
   (use-package magit
-           :ensure t)
+         :ensure t)
+  (use-package magit-section
+         :ensure t)
 
-    (use-package magit-section
-           :ensure t)
-
-      ;;       ,*** roam only 29.2
-      ;;                                                                  org roam
-                                                                 ;;		      (use-package org-roam :ensure t)
-                                                                     ;; first set			  org-roam
-                                                                   ;;			     (setq org-roam-directory (file-truename
-                                                                   ;;			  (concat my-homedir "/Dropbox/org-roam")))
-                                                                   ;;			  (org-roam-db-autosync-mode) ;; *** Which key ***
-
-
-
-
-
-
+       ;;       ,*** roam only 29.2
+       ;;                                                                  org roam
+       ;;		      (use-package org-roam :ensure t)
+       ;; first set			  org-roam
+       ;;			     (setq org-roam-directory (file-truename
+       ;;			  (concat my-homedir "/Dropbox/org-roam")))
+       ;;			  (org-roam-db-autosync-mode) ;; *** Which key ***
 
 #+END_SRC
 
-#+RESULTS:
+
