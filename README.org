@@ -5,17 +5,25 @@
   + add nonguix channel
   + Download configuration.scm
   + reconfigure with new configuration from dotfiles
-  + copy keepass
+  + copy keepass and copy key file by mounting usb stick with:
+    
   + install emacs with exwm config
   + install github ssh
   + install flatpak programs:
     sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
     Discord                   com.discordapp.Discord                  0.0.26      stable          system
   + create symlinks for dotfiles
-    
+  + install:
+  xdg-desktop-portal      1.16.0                  out/gnu/store/k9pk3dvq7sddbsj4spcg1wps886m4rbl-xdg-desktop-portal-1.16.0
+  xdg-desktop-portal-gtk  1.14.1                  out/gnu/store/kzf6jky4bm2dzs18xc3l88wzyrn4wbb5-xdg-desktop-portal-gtk-1.14.1
+  create an .xsession file in the home directory and make it executable with chmod +x .xsession
+  file content: dbus-run-session i3
+  + chromium sound is momentarily only working, when icecat was started before.
+  + to use the package ox reveal:
+
 * Emacs
 
-  There are two configurations, one for guix and one for all other distros
+  Thee are two configurations, one for guix and one for all other distros
   
   + TODO
   + TODO
@@ -25,4 +33,5 @@
   + add config
 
 * characoder
-  + https://launchpad.charachorder.com/#/manager
+  + New: https://www.iq-eq.io/#/manager
+  + old:https://launchpad.charachorder.com/#/manager

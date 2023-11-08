@@ -1,4 +1,7 @@
 * Fade out menu bar and tool bar
+:PROPERTIES:
+:ID:       429526d3-717c-4771-a124-658a26c367c7
+:END:
 save space by not showing the menu bar
 #+BEGIN_SRC emacs-lisp
   (menu-bar-mode 0)
@@ -362,30 +365,44 @@ REPL for clojure
   (require 'epa-file)
   (epa-file-enable)  
 #+END_SRC
-* Emacs 29.1
+* reveal.js for presentation
+install ox-reveal first
+install reveal.js
+#+BEGIN_SRC emacs-lisp
+(require 'ox-reveal)
+(setq org-reveal-root "file:///home/dave/.emacs.d/reveal.js")
+#+END_SRC
+
+#+RESULTS:
+: file:///home/dave/.emacs.d/reveal.js
+
+* Emacs 29.2
 Magit is included in 29.2
 #+BEGIN_SRC emacs-lisp
 
-    (if (string= (substring (emacs-version) 0 14) "GNU Emacs 29.1")
-         (use-package projectile :ensure t)
-      (use-package magit
-             :ensure t)
-      (use-package magit-section
-             :ensure t)
-      )
+  
+  (if (string= (substring (emacs-version) 0 14) "GNU Emacs 29.1")
+       (use-package projectile :ensure t)
+    (use-package magit
+           :ensure t)
+    (use-package magit-section
+           :ensure t)
+    )
 
 
-           ;;       ,*** roam only 29.2
-           ;;                                                                  org roam
-           ;;		      (use-package org-roam :ensure t)
-           ;; first set			  org-roam
-           ;;			     (setq org-roam-directory (file-truename
-           ;;			  (concat my-homedir "/Dropbox/org-roam")))
-           ;;			  (org-roam-db-autosync-mode) ;; *** Which key ***
+         ;;       ,*** roam only 29.2
+         ;;                                                                  org roam
+         ;;		      (use-package org-roam :ensure t)
+         ;; first set			  org-roam
+         ;;			     (setq org-roam-directory (file-truename
+
+         ;;			  (concat my-homedir "/Dropbox/org-roam")))
+         ;;			  (org-roam-db-autosync-mode) ;; *** Which key ***
+
+
 
 #+END_SRC
 
 #+RESULTS:
-: test1
 
 
