@@ -1,3 +1,7 @@
+#+STARTUP: fold
+
+* Advise for Mac users
+When using macosx, use s-SPC with shift for mark command
 * Fade out menu bar and tool bar
 :PROPERTIES:
 :ID:       429526d3-717c-4771-a124-658a26c367c7
@@ -12,24 +16,14 @@ save space by not showing the tool bar
   (tool-bar-mode 0)
 #+END_SRC
 
+#+RESULTS:
+
 * Melpa and Elpa
 add packages to retrieve packages =package-install= from other repositories
 #+BEGIN_SRC emacs-lisp
   (require 'package)
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
   (add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/"))
-#+END_SRC
-* Define home directory
-Macos/Linux Setuwhen
-When using macoss, use s-SPC with shift for mark command
-#+BEGIN_SRC emacs-lisp
-  (if (eq system-type 'darwin)
-      (defvar my-homedir "/Users/dave")
-    
-    
-                                         ; all other os use /home/dave
-    (defvar my-homedir "/home/dave"))
-
 #+END_SRC
 * Doom Theme
 #+BEGIN_SRC emacs-lisp
@@ -59,7 +53,16 @@ When using macoss, use s-SPC with shift for mark command
     :init
     (doom-modeline-mode 1))
 
+  
+  #+END_SRC
+* Font size
+#+BEGIN_SRC emacs-lisp
+  ;todo configure for mac as well 
+  (set-face-attribute 'default nil :height 170)
 #+END_SRC
+
+#+RESULTS:
+
 * Clojure
 #+BEGIN_SRC emacs-lisp
   (use-package clojure-mode
@@ -80,106 +83,111 @@ REPL for clojure
 #+END_SRC
 * Which key map
 #+BEGIN_SRC emacs-lisp
-  ;; shows shortcuts, when clicking C-x
-  (setq dave/file-map
-        (make-sparse-keymap))
-                                          ;
-  (define-key dave/file-map "s"
-              '("Save file" . save-buffer))
-  (define-key dave/file-map "r"
-              '("Open Recent files" . consult-recent-file))
-                                          ;
-  (define-key dave/file-map "f"
-              '("find file" . find-file))
-                                          ;
-  (define-key dave/file-map "C"
-              '("copy file" . doom/copy-this-file))
+    ;; shows shortcuts, when clicking C-x
+    (setq dave/file-map
+          (make-sparse-keymap))
+                                            ;
+    (define-key dave/file-map "s"
+                '("Save file" . save-buffer))
+    (define-key dave/file-map "r"
+                '("Open Recent files" . consult-recent-file))
+                                            ;
+    (define-key dave/file-map "f"
+                '("find file" . find-file))
+      (define-key dave/file-map "C"
+                '("copy file" . doom/copy-this-file))
+
   (setq dave/search-map
-        (make-sparse-keymap))
-  (define-key dave/search-map "s"
-              '("search-buffer" . consult-line))
-                                          ;
-  (setq dave/attach-map
-        (make-sparse-keymap))
-                                          ;
-  (define-key dave/attach-map "p"
-              '("attach" . org-download-clipboard))
-                                          ;
-  (setq dave/links-map
-        (make-sparse-keymap))
-                                          ;
-  (define-key dave/links-map "s"
-              '("store link" . org-store-link))
+          (make-sparse-keymap))
+    (define-key dave/search-map "s"
+                '("search-buffer" . consult-line))
+  (define-key dave/search-map "i"
+                '("Jump to symbol" . consult-imenu))                                            ;
+    (setq dave/attach-map
+          (make-sparse-keymap))
+                                            ;
+    (define-key dave/attach-map "p"
+                '("attach" . org-download-clipboard))
+                                            ;
+    (setq dave/links-map
+          (make-sparse-keymap))
+                                            ;
+    (define-key dave/links-map "s"
+                '("store link" . org-store-link))
+
   (setq dave/org-map
-        (make-sparse-keymap))
-  (define-key dave/org-map "."
-              '("search-heading" . consult-org-heading))
-                                          ;
-  (define-key dave/org-map "l"
-              (cons "links" dave/links-map))
-                                          ;
-  (define-key dave/org-map "a"
-              (cons "attachments" dave/attach-map))
+          (make-sparse-keymap))
+    (define-key dave/org-map "."
+                '("search-heading" . consult-org-heading))
+                                            ;
+    (define-key dave/org-map "l"
+                (cons "links" dave/links-map))
+                                            ;
+    (define-key dave/org-map "a"
+                (cons "attachments" dave/attach-map))
+
   (setq dave/notes-map
-        (make-sparse-keymap))
-  (define-key dave/notes-map "a"
-              '("agenda" . org-agenda))
-                                          ;
-  (setq dave/projectile-map
-        (make-sparse-keymap))
-                                          ;
-  (define-key dave/projectile-map "p"
-              '("switch to project" . projectile-switch-project))
-                                          ;
-  (define-key dave/projectile-map "a"
-              '("add project" . projectile-add-known-project))
-                                          ;
-  (define-key dave/projectile-map "f"
-              '("find file in project" . projectile-find-file))
-                                          ;
-  (setq dave/bindings-map
-        (make-sparse-keymap))
+          (make-sparse-keymap))
+    (define-key dave/notes-map "a"
+                '("agenda" . org-agenda))
+                                            ;
+    (setq dave/projectile-map
+          (make-sparse-keymap))
+                                            ;
+    (define-key dave/projectile-map "p"
+               '("switch to project" . projectile-switch-project))
+                                            ;
+    (define-key dave/projectile-map "a"
+                '("add project" . projectile-add-known-project))
+                                            ;
+    (define-key dave/projectile-map "f"
+                '("find file in project" . projectile-find-file))
+                                            ;
+    (setq dave/bindings-map
+          (make-sparse-keymap))
 
+                                            ;
+    (define-key dave/bindings-map "t"
+                '("bindings map" . which-key-show-top-level))
+                                            ;
+    (setq dave/help-map
+          (make-sparse-keymap))
+                                            ;
+    (define-key dave/help-map "b"
+                (cons "bindings" dave/bindings-map))
+    (setq dave/my-map
+          (make-sparse-keymap))
+    (define-key dave/my-map "m"
+                (cons "org" dave/org-map))
+    (define-key dave/my-map "s"
+                (cons "search" dave/search-map))
+    (define-key dave/my-map "f"
+                (cons "files" dave/file-map))
+                                            ;
+    (define-key dave/my-map "n"
+                (cons "notes" dave/notes-map))
+                                            ;
+    (define-key dave/my-map "p"
+                (cons "project" dave/projectile-map))
+                                            ;
+    (define-key dave/my-map "h"
+                (cons "help" dave/help-map))
+                                            ;
+    (define-key dave/my-map "X"
+                '("Capture" . dave/org-capture))
+                                            ;(define-key evil-normal-state-map
 
-                                          ;
-  (define-key dave/bindings-map "t"
-              '("bindings map" . which-key-show-top-level))
-                                          ;
-  (setq dave/help-map
-        (make-sparse-keymap))
-                                          ;
-  (define-key dave/help-map "b"
-              (cons "bindings" dave/bindings-map))
-  (setq dave/my-map
-        (make-sparse-keymap))
-  (define-key dave/my-map "m"
-              (cons "org" dave/org-map))
-  (define-key dave/my-map "s"
-              (cons "search" dave/search-map))
-  (define-key dave/my-map "f"
-              (cons "files" dave/file-map))
-                                          ;
-  (define-key dave/my-map "n"
-              (cons "notes" dave/notes-map))
-                                          ;
-  (define-key dave/my-map "p"
-              (cons "project" dave/projectile-map))
-                                          ;
-  (define-key dave/my-map "h"
-              (cons "help" dave/help-map))
-                                          ;
-  (define-key dave/my-map "X"
-              '("Capture" . dave/org-capture))
-                                          ;(define-key evil-normal-state-map
-
-  (global-set-key
-   (kbd "C-c")
-   dave/my-map)
+    (global-set-key
+     (kbd "C-c")
+     dave/my-map)
 
 #+END_SRC
+
+#+RESULTS:
+: (keymap (88 Capture . dave/org-capture) (104 help keymap (98 bindings keymap (116 bindings map . which-key-show-top-level))) (112 project keymap (102 find file in project . projectile-find-file) (97 add project . projectile-add-known-project) (112 switch to project . projectile-switch-project)) (110 notes keymap (97 agenda . org-agenda)) (102 files keymap (67 copy file . doom/copy-this-file) (102 find file . find-file) (114 Open Recent files . consult-recent-file) (115 Save file . save-buffer)) (115 search keymap (105 Jump to symbol . consult-imenu) (115 search-buffer . consult-line)) (109 org keymap (97 attachments keymap (112 attach . org-download-clipboard)) (108 links keymap (115 store link . org-store-link)) (46 search-heading . consult-org-heading)))
+
 * Remap key bindings
 #+BEGIN_SRC emacs-lisp
-
       (defun my-org-mode-setup ()
       (define-key org-mode-map (kbd "M-]") 'org-forward-element)
       (define-key org-mode-map (kbd "M-[") 'org-backward-element)
@@ -243,47 +251,63 @@ REPL for clojure
   #+END_SRC
 * Org mode 
 #+BEGIN_SRC emacs-lisp
-     (setq org-attach-id-dir
-           (concat my-homedir "/Dropbox/org/.attach/"))
-     (setq org-attach-set-directory
-           (concat my-homedir "/Dropbox/org/.attach/"))
 
-     (unless
-         (package-installed-p 'org-download)
-       (package-install 'org-download)
-       )
-     (require 'org-download)
-     (setq org-image-actual-width 800)									;(with-eval-after-load 'org
-                                             ;  (org-download-enable) not really needed
+   ;; Setup the org folder
+  (setq org-directory "~/org")
+  (setq org-agenda-files (list "~/org/"))
+  (setq org-refile-use-outline-path 'file
+      org-outline-path-complete-in-steps nil)
 
-     (setq org-adapt-indentation t)
-     (setq org-startup-indented t)
+  ; use a depth level of 6 max
+  (setq org-refile-targets
+        '((org-agenda-files . (:maxlevel . 3))))
 
-     ;;                                                                                  ;(global-set-key (kbd "C-c l") #'org-store-link)
-     ;;                                                                                  ;(global-set-key (kbd "C-c a") #'org-agenda)
-     ;;                                                                                  ;(global-set-key (kbd "C-c c") #'org-capture)
+  
+            (setq org-attach-id-dir
+                  (concat my-homedir "/Dropbox/org/.attach/"))
+            (setq org-attach-set-directory
+                  (concat my-homedir "/Dropbox/org/.attach/"))
 
+            (unless
+                (package-installed-p 'org-download)
+              (package-install 'org-download)
+              )
+            (require 'org-download)
+            (setq org-image-actual-width 800)									;(with-eval-after-load 'org
+                                                    ;  (org-download-enable) not really needed
 
-     (setq   org-highest-priority ?A
-             org-default-priority ?B
-             org-lowest-priority ?D
-             org-priority-faces '((?A :foreground "#DC143C" :weight bold)
-                                  (?B :foreground "#E76E34" :weight bold)
-                                  (?C :foreground "#D8A743" :weight bold)
-                                  (?D :foreground "#3BAB60" :weight bold))
-             )
+            (setq org-adapt-indentation t)
+            (setq org-startup-indented t)
 
-     (setq org-todo-keywords
-           '((sequence "TODO" "|" "DONE" "KILL")))
-
+            ;;                                                                                  ;(global-set-key (kbd "C-c l") #'org-store-link)
+            ;;                                                                                  ;(global-set-key (kbd "C-c a") #'org-agenda)
+            ;;                                                                                  ;(global-set-key (kbd "C-c c") #'org-capture)
 
 
-     ;;   ; new line at 120
-     (add-hook 'org-mode-hook '(lambda () (setq fill-column 120)))
-     (add-hook 'org-mode-hook 'turn-on-auto-fill)
+            (setq   org-highest-priority ?A
+                    org-default-priority ?B
+                    org-lowest-priority ?D
+                    org-priority-faces '((?A :foreground "#DC143C" :weight bold)
+                                         (?B :foreground "#E76E34" :weight bold)
+                                         (?C :foreground "#D8A743" :weight bold)
+                                         (?D :foreground "#3BAB60" :weight bold))
+                    )
 
-                                             ; consult for consult open recent file
+            (setq org-todo-keywords
+                  '((sequence "TODO" "|" "DONE" "KILL")))
+
+
+
+            ;;   ; new line at 120
+            (add-hook 'org-mode-hook '(lambda () (setq fill-column 120)))
+            (add-hook 'org-mode-hook 'turn-on-auto-fill)
+
+                                                    ; consult for consult open recent file
 #+END_SRC
+
+#+RESULTS:
+: ((org-agenda-files :maxlevel . 4))
+
 * Org-agenda
 #+BEGIN_SRC emacs-lisp
      (setq org-agenda-skip-function-global
@@ -464,5 +488,17 @@ Magit is included in 29.2
 				(message "File copied to %S" (abbreviate-file-name new-path))))
 #+END_SRC
 
+* Set left margin
+#+BEGIN_SRC emacs-lisp
+(add-hook 'window-configuration-change-hook
+          (lambda ()
+            (set-window-margins (car (get-buffer-window-list (current-buffer) nil t)) 30 0)))
+#+END_SRC
+
 #+RESULTS:
-: doom/copy-this-file
+| (lambda nil (set-window-margins (car (get-buffer-window-list (current-buffer) nil t)) 30 0)) | (lambda nil (set-window-margins (car (get-buffer-window-list (current-buffer) nil t)) 10 0)) | doom-modeline-invalidate-huds | doom-modeline-refresh-bars | window--adjust-process-windows |
+
+* rereveal
+#+BEGIN_SRC emacs-lisp
+  (require 'org-re-reveal)
+#+END_SRC
