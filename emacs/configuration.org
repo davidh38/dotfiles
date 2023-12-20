@@ -263,10 +263,8 @@ REPL for clojure
         '((org-agenda-files . (:maxlevel . 3))))
 
   
-            (setq org-attach-id-dir
-                  (concat my-homedir "/Dropbox/org/.attach/"))
-            (setq org-attach-set-directory
-                  (concat my-homedir "/Dropbox/org/.attach/"))
+            (setq org-attach-id-dir "~/Dropbox/org/.attach/")
+            (setq org-attach-set-directory "~/Dropbox/org/.attach/")
 
             (unless
                 (package-installed-p 'org-download)
@@ -306,7 +304,7 @@ REPL for clojure
 #+END_SRC
 
 #+RESULTS:
-: ((org-agenda-files :maxlevel . 4))
+| turn-on-auto-fill | (lambda nil (setq fill-column 120)) | my-org-mode-setup | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-fold-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes |
 
 * Org-agenda
 #+BEGIN_SRC emacs-lisp
@@ -314,16 +312,11 @@ REPL for clojure
            '(org-agenda-skip-entry-if 'todo '("DONE" "KILL")))
 
      (setq org-agenda-files
-           (list
-
-            (concat my-homedir "/Dropbox/org/schedule.org") (concat my-homedir "/Dropbox/org/schedule.org_archive") (concat my-homedir "/Dropbox/org/birthdays.org")  (concat my-homedir "/Dropbox/org/events.org") (concat my-homedir "/Dropbox/org/work.org")
-            )
+           (list "~/Dropbox/org/schedule.org" "~/Dropbox/org/schedule.org_archive" "~/Dropbox/org/birthdays.org" "~/Dropbox/org/events.org" "~/Dropbox/org/work.org"            )
            )
 
 
-
-                                             ;(concat my-homedir "/Dropbox/org/schedule.org") (concat my-homedir "/home/dave/Dropbox/org/schedule.org_archive") (concat my-homedir "/Dropbox/org/birthdays.org")  (concat my-homedir "/Dropbox/org/events.org") (concat my-homedir "/Dropbox/org/work.org"))))
-                                             ;(lambda () (writeroom-mode 1)))
+                                             ;(Lambda () (writeroom-mode 1)))
      (setq org-tags-exclude-from-inheritance '("time_booking"))
      (setq org-agenda-start-on-weekday 1)         ;; calendar begins today
      (setq org-agenda-start-day "1d")
@@ -363,7 +356,7 @@ REPL for clojure
                        (
 
 
-                        (org-agenda-files (list (concat my-homdir "/Dropbox/org/work.org") (concat my-homedir "/Dropbox/org/work.org_archive")))
+                        (org-agenda-files (list "~/Dropbox/org/work.org" "~/Dropbox/org/work.org_archive"))
 
                         (org-agenda-span 7)                      ;; overview of appointments
                         (calendar-week-start-day 0)
@@ -382,7 +375,7 @@ REPL for clojure
               (
                (agenda ""
                        (
-                        (org-agenda-files (list (concat my-homedir "/Dropbox/org/schedule.org") (concat my-homedir "/Dropbox/org/schedule.org_archive")))
+                        (org-agenda-files (list "~/Dropbox/org/schedule.org" "~/Dropbox/org/schedule.org_archive"))
                                              ;		  ;(org-agenda-sorting-strategy '(priority-up effort-down))
                         (org-agenda-span 7)                      ;; overview of appointments
                         (calendar-week-start-day 0)
@@ -398,6 +391,12 @@ REPL for clojure
            )
 
 #+END_SRC
+
+#+RESULTS:
+| n | all         | ((agenda  ((org-agenda-span 7) (calendar-week-start-day 0) (org-agenda-start-on-weekday 1) (org-agenda-include-inactive-timestamp t))))                                                                 |
+| w | work todos  | ((agenda  ((org-agenda-files (list ~/Dropbox/org/work.org ~/Dropbox/org/work.org_archive)) (org-agenda-span 7) (calendar-week-start-day 0) (org-agenda-start-on-weekday 1))) (tags-todo work))          |
+| i | inbox todos | ((agenda  ((org-agenda-files (list ~/Dropbox/org/schedule.org ~/Dropbox/org/schedule.org_archive)) (org-agenda-span 7) (calendar-week-start-day 0) (org-agenda-start-on-weekday 1))) (tags-todo inbox)) |
+
 * Encryption 
 #+BEGIN_SRC emacs-lisp
   (require 'epa-file)
