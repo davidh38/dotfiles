@@ -493,6 +493,7 @@ Magit is included in 29.2
 #+END_SRC
 
 * Set left margin
+This is for big monitors 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'window-configuration-change-hook
           (lambda ()
@@ -503,6 +504,7 @@ Magit is included in 29.2
 | (lambda nil (set-window-margins (car (get-buffer-window-list (current-buffer) nil t)) 30 0)) | (lambda nil (set-window-margins (car (get-buffer-window-list (current-buffer) nil t)) 10 0)) | doom-modeline-invalidate-huds | doom-modeline-refresh-bars | window--adjust-process-windows |
 
 * rereveal
+what is rereveal for? 
 #+BEGIN_SRC emacs-lisp
   (require 'org-re-reveal)
 #+END_SRC
