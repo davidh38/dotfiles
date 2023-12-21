@@ -347,7 +347,7 @@ REPL for clojure
                                                                      (org-agenda-include-inactive-timestamp t)
                                                                      )
                     )
-
+            (tags-todo "*")
                                           ;(tagst-odo "-personal")
             )
 
@@ -398,7 +398,7 @@ REPL for clojure
 #+END_SRC
 
 #+RESULTS:
-| n | all         | ((agenda  ((org-agenda-files (list org-directory)) (org-agenda-span 7) (calendar-week-start-day 0) (org-agenda-start-on-weekday 1) (org-agenda-include-inactive-timestamp t))))                     |
+| n | all         | ((agenda  ((org-agenda-files (list org-directory)) (org-agenda-span 7) (calendar-week-start-day 0) (org-agenda-start-on-weekday 1) (org-agenda-include-inactive-timestamp t))) (tags-todo *))       |
 | w | work todos  | ((agenda  ((org-agenda-files '(~/Dropbox/org/work.org ~/Dropbox/org/work.org_archive)) (org-agenda-span 7) (calendar-week-start-day 0) (org-agenda-start-on-weekday 1))) (tags-todo work))          |
 | i | inbox todos | ((agenda  ((org-agenda-files '(~/Dropbox/org/schedule.org ~/Dropbox/org/schedule.org_archive)) (org-agenda-span 7) (calendar-week-start-day 0) (org-agenda-start-on-weekday 1))) (tags-todo inbox)) |
 
