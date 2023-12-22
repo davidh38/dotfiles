@@ -1,5 +1,7 @@
 #+STARTUP: fold
-
+* Install first
+for ox-reveal
+git clone https://github.com/hakimel/reveal.js.git
 * Advise for Mac users
 When using macosx, use s-SPC with shift for mark command
 * Fade out menu bar and tool bar
@@ -43,12 +45,14 @@ add packages to retrieve packages =package-install= from other repositories
     (doom-themes-org-config))
                                           ; doom line looks much nicer
                                           ; remember to install nerd fonts nerd-icons-install-fonts
-  (unless (member "Symbols Nerd Font Mono" (font-family-list))
-  (nerd-icons-install-fonts t))
 
   (use-package all-the-icons
     :ensure t)
 
+  (unless (member "Symbols Nerd Font Mono" (font-family-list))
+  (nerd-icons-install-fonts t))
+
+  
   (use-package
     doom-modeline
     :ensure t
@@ -57,6 +61,9 @@ add packages to retrieve packages =package-install= from other repositories
 
 
   #+END_SRC
+
+  #+RESULTS:
+
 * Font size
 #+BEGIN_SRC emacs-lisp
   ;todo configure for mac as well 
@@ -408,15 +415,17 @@ REPL for clojure
   (epa-file-enable)  
 #+END_SRC
 * reveal.js for presentation
-install ox-reveal first
+IInstall ox-reveal first
 install reveal.js
 #+BEGIN_SRC emacs-lisp
-(require 'ox-reveal)
-(setq org-reveal-root "file://~/.emacs.d/reveal.js")
+  (use-package ox-reveal
+  :ensure t)
+;    (require 'ox-reveal)
+    (setq org-reveal-root "file://~/.emacs.d/reveal.js")
 #+END_SRC
 
 #+RESULTS:
-: file:///home/dave/.emacs.d/reveal.js
+: file://~/.emacs.d/reveal.js
 * Emacs 29.2
 Magit is included in 29.2
 #+BEGIN_SRC emacs-lisp
@@ -506,5 +515,9 @@ This is for big monitors
 * rereveal
 what is rereveal for? 
 #+BEGIN_SRC emacs-lisp
-  (require 'org-re-reveal)
+  (use-package org-re-reveal
+  :ensure t)
+;    (require 'org-re-reveal)
 #+END_SRC
+
+#+RESULTS:
