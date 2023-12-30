@@ -106,6 +106,19 @@ REPL for clojure
       (define-key dave/file-map "C"
                 '("copy file" . doom/copy-this-file))
 
+
+    (setq dave/snipe-map
+          (make-sparse-keymap))
+                                            ;
+    (define-key dave/snipe-map "s"
+                (cons "bindings" dave/mysnipe-map))
+
+  (setq dave/mysnipe-map
+          (make-sparse-keymap))
+                                          ;
+    (define-key dave/mysnipe-map "h"
+                '("Save file" . avy-goto-line))
+
   (setq dave/search-map
           (make-sparse-keymap))
     (define-key dave/search-map "s"
@@ -172,8 +185,10 @@ REPL for clojure
                 (cons "search" dave/search-map))
     (define-key dave/my-map "f"
                 (cons "files" dave/file-map))
-                                            ;
-    (define-key dave/my-map "n"
+     (define-key dave/my-map "g"
+                (cons "" dave/snipe-map))
+
+   (define-key dave/my-map "n"
                 (cons "notes" dave/notes-map))
                                             ;
     (define-key dave/my-map "p"
@@ -193,8 +208,7 @@ REPL for clojure
 #+END_SRC
 
 #+RESULTS:
-: (keymap (88 Capture . dave/org-capture) (104 help keymap (98 bindings keymap (116 bindings map . which-key-show-top-level))) (112 project keymap (102 find file in project . projectile-find-file) (97 add project . projectile-add-known-project) (112 switch to project . projectile-switch-project)) (110 notes keymap (97 agenda . org-agenda)) (102 files keymap (67 copy file . doom/copy-this-file) (102 find file . find-file) (114 Open Recent files . consult-recent-file) (115 Save file . save-buffer)) (115 search keymap (105 Jump to symbol . consult-imenu) (115 search-buffer . consult-line)) (109 org keymap (97 attachments keymap (112 attach . org-download-clipboard)) (108 links keymap (115 store link . org-store-link)) (46 search-heading . consult-org-heading)))
-
+: (keymap (88 Capture . dave/org-capture) (104 help keymap (98 bindings keymap (116 bindings map . which-key-show-top-level))) (112 project keymap (102 find file in project . projectile-find-file) (97 add project . projectile-add-known-project) (112 switch to project . projectile-switch-project)) (110 notes keymap (97 agenda . org-agenda)) (103  keymap (115 bindings keymap (104 Save file . avy-goto-line))) (102 files keymap (67 copy file . doom/copy-this-file) (102 find file . find-file) (114 Open Recent files . consult-recent-file) (115 Save file . save-buffer)) (115 search keymap (105 Jump to symbol . consult-imenu) (115 search-buffer . consult-line)) (109 org keymap (97 attachments keymap (112 attach . org-download-clipboard)) (108 links keymap (115 store link . org-store-link)) (46 search-heading . consult-org-heading)))
 * Remap key bindings for the Charachorder 
 #+BEGIN_SRC emacs-lisp
       (defun my-org-mode-setup ()
