@@ -2,8 +2,15 @@
 * Install first
 for ox-reveal
 git clone https://github.com/hakimel/reveal.js.git in $HOME directory
+
+git clone https://github.com/davidh38/dotfiles
+ln -s ~/dotfiles/emacs/configuration.org ~/.emacs.d/configuration.org
 * Advise for Mac users
 When using macosx, use s-SPC with shift for mark command
+* Dont ask to follow the symbolic link to the dotfiles
+#+begin_src elisp
+(setq vc-follow-symlinks nil)
+#+end_src
 * Fade out menu bar and tool bar
 :PROPERTIES:
 :ID:       429526d3-717c-4771-a124-658a26c367c7
@@ -340,7 +347,7 @@ REPL for clojure
   (setq org-agenda-skip-function-global
         '(org-agenda-skip-entry-if 'todo '("DONE" "KILL")))
 
-
+  (setq org-agenda-sorting-strategy '(todo priority-up effort-down))
 
                                           ;(Lambda () (writeroom-mode 1)))
   (setq org-tags-exclude-from-inheritance '("time_booking"))
@@ -404,7 +411,7 @@ REPL for clojure
             (agenda ""
                     ( 
                      (org-agenda-files '("~/Dropbox/org/schedule.org" "~/Dropbox/org/birthdays.org" "~/Dropbox/org/schedule.org_archive"))
-                                          ;		  ;(org-agenda-sorting-strategy '(priority-up effort-down))
+
                      (org-agenda-span 7)                      ;; overview of appointments
                      (calendar-week-start-day 0)
                      (org-agenda-start-on-weekday 1)         ;; calendar begins today)
