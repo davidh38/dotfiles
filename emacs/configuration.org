@@ -9,7 +9,7 @@ ln -s ~/dotfiles/emacs/configuration.org ~/.emacs.d/configuration.org
 When using macosx, use s-SPC with shift for mark command
 * Dont ask to follow the symbolic link to the dotfiles
 #+begin_src elisp
-(setq vc-follow-symlinks nil)
+(setq vc-follow-symlinks t)
 #+end_src
 * Fade out menu bar and tool bar
 :PROPERTIES:
@@ -347,7 +347,11 @@ REPL for clojure
   (setq org-agenda-skip-function-global
         '(org-agenda-skip-entry-if 'todo '("DONE" "KILL")))
 
-  (setq org-agenda-sorting-strategy '(todo priority-up effort-down))
+  (setq org-agenda-sorting-strategy '(
+                                      (agenda priority-down effort-down)
+                                      (todo priority-down effort-down)
+
+        ))
 
                                           ;(Lambda () (writeroom-mode 1)))
   (setq org-tags-exclude-from-inheritance '("time_booking"))
