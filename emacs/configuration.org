@@ -284,59 +284,60 @@ REPL for clojure
 * Org mode 
 #+BEGIN_SRC emacs-lisp
 
-     ;; Setup the org folder
-    (setq org-directory "~/Dropbox/org")
-    (setq org-agenda-files (list org-directory))
-;       (setq org-agenda-files
- ;          '("~/Dropbox/org/schedule.org" "~/Dropbox/org/schedule.org_archive" "~/Dropbox/org/birthdays.org" "~/Dropbox/org/events.org" "~/Dropbox/org/work.org"            )
-;           )
 
-    (setq org-refile-use-outline-path 'file
-        org-outline-path-complete-in-steps nil)
+         ;; Setup the org folder
+      (setq org-directory "~/Dropbox/org")
+      (setq org-agenda-files (list org-directory))
+  ;       (setq org-agenda-files
+   ;          '("~/Dropbox/org/schedule.org" "~/Dropbox/org/schedule.org_archive" "~/Dropbox/org/birthdays.org" "~/Dropbox/org/events.org" "~/Dropbox/org/work.org"            )
+  ;           )
 
-    ; use a depth level of 6 max
-    (setq org-refile-targets
-          '((org-agenda-files . (:maxlevel . 3))))
+      (setq org-refile-use-outline-path 'file
+          org-outline-path-complete-in-steps nil)
 
-  
-              (setq org-attach-id-dir "~/Dropbox/org/.attach/")
-              (setq org-attach-set-directory "~/Dropbox/org/.attach/")
-
-              (unless
-                  (package-installed-p 'org-download)
-                (package-install 'org-download)
-                )
-              (require 'org-download)
-              (setq org-image-actual-width 800)									;(with-eval-after-load 'org
-                                                      ;  (org-download-enable) not really needed
-
-              (setq org-adapt-indentation t)
-              (setq org-startup-indented t)
-
-              ;;                                                                                  ;(global-set-key (kbd "C-c l") #'org-store-link)
-              ;;                                                                                  ;(global-set-key (kbd "C-c a") #'org-agenda)
-              ;;                                                                                  ;(global-set-key (kbd "C-c c") #'org-capture)
+      ; use a depth level of 6 max
+      (setq org-refile-targets
+            '((org-agenda-files . (:maxlevel . 3))))
 
 
-              (setq   org-highest-priority ?A
-                      org-default-priority ?B
-                      org-lowest-priority ?D
-                      org-priority-faces '((?A :foreground "#DC143C" :weight bold)
-                                           (?B :foreground "#E76E34" :weight bold)
-                                           (?C :foreground "#D8A743" :weight bold)
-                                           (?D :foreground "#3BAB60" :weight bold))
-                      )
+                (setq org-attach-id-dir "~/Dropbox/org/.attach/")
+                (setq org-attach-set-directory "~/Dropbox/org/.attach/")
 
-              (setq org-todo-keywords
-                    '((sequence "TODO" "|" "DONE" "KILL")))
+                (unless
+                    (package-installed-p 'org-download)
+                  (package-install 'org-download)
+                  )
+                (require 'org-download)
+                (setq org-image-actual-width 800)									;(with-eval-after-load 'org
+                                                        ;  (org-download-enable) not really needed
+
+                (setq org-adapt-indentation t)
+                (setq org-startup-indented t)
+
+                ;;                                                                                  ;(global-set-key (kbd "C-c l") #'org-store-link)
+                ;;                                                                                  ;(global-set-key (kbd "C-c a") #'org-agenda)
+                ;;                                                                                  ;(global-set-key (kbd "C-c c") #'org-capture)
+
+
+                (setq   org-highest-priority ?A
+                        org-default-priority ?B
+                        org-lowest-priority ?D
+                        org-priority-faces '((?A :foreground "#DC143C" :weight bold)
+                                             (?B :foreground "#E76E34" :weight bold)
+                                             (?C :foreground "#D8A743" :weight bold)
+                                             (?D :foreground "#3BAB60" :weight bold))
+                        )
+
+                (setq org-todo-keywords
+                      '((sequence "TODO" "|" "DONE" "KILL" "WAIT")))
 
 
 
-              ;;   ; new line at 120
-              (add-hook 'org-mode-hook '(lambda () (setq fill-column 120)))
-              (add-hook 'org-mode-hook 'turn-on-auto-fill)
+                ;;   ; new line at 120
+                (add-hook 'org-mode-hook '(lambda () (setq fill-column 120)))
+                (add-hook 'org-mode-hook 'turn-on-auto-fill)
 
-                                                      ; consult for consult open recent file
+                                                        ; consult for consult open recent file
 #+END_SRC
 
 #+RESULTS:
@@ -344,90 +345,95 @@ REPL for clojure
 
 * Org-agenda
 #+BEGIN_SRC emacs-lisp
-  (setq org-agenda-skip-function-global
-        '(org-agenda-skip-entry-if 'todo '("DONE" "KILL")))
+    (setq org-agenda-skip-function-global
+          '(org-agenda-skip-entry-if 'todo '("DONE" "KILL")))
 
-  (setq org-agenda-sorting-strategy '(
-                                      (agenda priority-down effort-down)
-                                      (todo priority-down effort-down)
+  ; This sorts the items at the bottom of the agenda screen 
+  ;(setq org-enable-priority-commands t
+   (setq     org-default-priority ?D)
 
-        ))
+  
+    (setq org-agenda-sorting-strategy '(
+                                        (agenda priority-down effort-down)
+                                        (todo priority-down effort-down)
 
-                                          ;(Lambda () (writeroom-mode 1)))
-  (setq org-tags-exclude-from-inheritance '("time_booking"))
-  (setq org-agenda-start-on-weekday 1)         ;; calendar begins today
-  (setq org-agenda-start-day "1d")
+          ))
 
-  (setq org-agenda-clockreport-parameter-plist
-                                          ;'(:scope file :maxlevel 3 :link t :properties ("Effort") :formula "$5='(- $1 $4);U::@1$1=string(\"Effort\")::@1$3=string(\"Total\")::@1$4=string(\"Task time\")" :formatter my-clocktable-write)
-                                          ;'(:maxlevel 3) :properties ("Effort") :fileskip0 t :formatter my-clocktable-write :formula "$7='(- $2 $4);U::$8='(- $2 $5);U::$9='(- $2 $6);U" )
-        '(:maxlevel 4 ;:properties ("Effort") :fileskip0 t :formatter my-clocktable-write :formula "$9='(- $3 $5);U::$10='(- $2 $6);U::$11='(- $2 $7);U::$12='(- $3 $8);U"
-                    )
-        )
+                                            ;(Lambda () (writeroom-mode 1)))
+    (setq org-tags-exclude-from-inheritance '("time_booking"))
+    (setq org-agenda-start-on-weekday 1)         ;; calendar begins today
+    (setq org-agenda-start-day "1d")
 
-  (setq org-agenda-custom-commands
-                                          ;	     (append org-agenda-custom-commands
-        '(
-
-          ("n" "all"
-           (
-            (agenda ""
-
-                    (
-                                             (org-agenda-files (list org-directory))
-                                             (org-agenda-span 7)                      ;; overview of appointments
-                                                                     (calendar-week-start-day 0)
-                                                                     (org-agenda-start-on-weekday 1)         ;; calendar begins today
-                                                                     (org-agenda-include-inactive-timestamp t)
-                                                                     )
-                    )
-            (tags-todo "*")
-                                          ;(tagst-odo "-personal")
-            )
-
-           )
-
-
-          ("w" "work todos"
-           (
-            (agenda ""
-
-                    (
-
-
-                     (org-agenda-files '("~/Dropbox/org/work.org" "~/Dropbox/org/work.org_archive"))
-
-                     (org-agenda-span 7)                      ;; overview of appointments
-                     (calendar-week-start-day 0)
-                     (org-agenda-start-on-weekday 1)         ;; calendar begins today
-                     )
-                    )
-            (tags-todo "work")
-                                          ;(tagst-odo "-personal")
-            )
-
-           )
-
-
-          ("i" "inbox todos"
-                                          ; das ist fuer die todas
-           (
-            (agenda ""
-                    ( 
-                     (org-agenda-files '("~/Dropbox/org/schedule.org" "~/Dropbox/org/birthdays.org" "~/Dropbox/org/schedule.org_archive"))
-
-                     (org-agenda-span 7)                      ;; overview of appointments
-                     (calendar-week-start-day 0)
-                     (org-agenda-start-on-weekday 1)         ;; calendar begins today)
-
-                     )
-                    )
-            (tags-todo "inbox")
-            )
-           )
+    (setq org-agenda-clockreport-parameter-plist
+                                            ;'(:scope file :maxlevel 3 :link t :properties ("Effort") :formula "$5='(- $1 $4);U::@1$1=string(\"Effort\")::@1$3=string(\"Total\")::@1$4=string(\"Task time\")" :formatter my-clocktable-write)
+                                            ;'(:maxlevel 3) :properties ("Effort") :fileskip0 t :formatter my-clocktable-write :formula "$7='(- $2 $4);U::$8='(- $2 $5);U::$9='(- $2 $6);U" )
+          '(:maxlevel 4 ;:properties ("Effort") :fileskip0 t :formatter my-clocktable-write :formula "$9='(- $3 $5);U::$10='(- $2 $6);U::$11='(- $2 $7);U::$12='(- $3 $8);U"
+                      )
           )
-                                          ;  )
-        )
+
+    (setq org-agenda-custom-commands
+                                            ;	     (append org-agenda-custom-commands
+          '(
+
+            ("n" "all"
+             (
+              (agenda ""
+
+                      (
+                                               (org-agenda-files (list org-directory))
+                                               (org-agenda-span 7)                      ;; overview of appointments
+                                                                       (calendar-week-start-day 0)
+                                                                       (org-agenda-start-on-weekday 1)         ;; calendar begins today
+                                                                       (org-agenda-include-inactive-timestamp t)
+                                                                       )
+                      )
+              (tags-todo "*")
+                                            ;(tagst-odo "-personal")
+              )
+
+             )
+
+
+            ("w" "work todos"
+             (
+              (agenda ""
+
+                      (
+
+
+                       (org-agenda-files '("~/Dropbox/org/work.org" "~/Dropbox/org/work.org_archive"))
+
+                       (org-agenda-span 7)                      ;; overview of appointments
+                       (calendar-week-start-day 0)
+                       (org-agenda-start-on-weekday 1)         ;; calendar begins today
+                       )
+                      )
+              (tags-todo "work")
+                                            ;(tagst-odo "-personal")
+              )
+
+             )
+
+
+            ("i" "inbox todos"
+                                            ; das ist fuer die todas
+             (
+              (agenda ""
+                      ( 
+                       (org-agenda-files '("~/Dropbox/org/schedule.org" "~/Dropbox/org/birthdays.org" "~/Dropbox/org/schedule.org_archive"))
+
+                       (org-agenda-span 7)                      ;; overview of appointments
+                       (calendar-week-start-day 0)
+                       (org-agenda-start-on-weekday 1)         ;; calendar begins today)
+
+                       )
+                      )
+              (tags-todo "inbox")
+              )
+             )
+            )
+                                            ;  )
+          )
 
 #+END_SRC
 
