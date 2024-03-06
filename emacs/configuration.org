@@ -86,6 +86,8 @@ add packages to retrieve packages =package-install= from other repositories
   (use-package clojure-mode
     :ensure t
     )
+
+  
 #+END_SRC
 REPL for clojure
 #+BEGIN_SRC emacs-lisp
@@ -94,6 +96,18 @@ REPL for clojure
     (package-install 'cider))
 
 #+END_SRC
+
+Babel with clojure
+#+BEGIN_SRC emacs-lisp
+  (require 'ob-clojure)
+  (setq org-babel-clojure-backend 'cider)
+  (require 'cider)
+
+  
+#+END_SRC
+
+#+RESULTS:
+
 * Which key 
 #+BEGIN_SRC emacs-lisp
   (use-package which-key :ensure t)
@@ -126,7 +140,7 @@ REPL for clojure
 		(cons "bindings" dave/mysnipe-map))
 					  ;
     (define-key dave/mysnipe-map "h"
-		'("Save file" . avy-goto-line))
+		'("snipe line" . avy-goto-line))
 
   (setq dave/search-map
 	  (make-sparse-keymap))
@@ -159,7 +173,7 @@ REPL for clojure
 
   (setq dave/notes-map
 	  (make-sparse-keymap))
-    (define-key dave/notes-map "a"
+   (define-key dave/notes-map "a"
 		'("agenda" . org-agenda))
 					    ;
     (setq dave/projectile-map
@@ -559,3 +573,9 @@ This is for big monitors
 #+RESULTS:
 | (lambda nil (set-window-margins (car (get-buffer-window-list (current-buffer) nil t)) 30 0)) | (lambda nil (set-window-margins (car (get-buffer-window-list (current-buffer) nil t)) 10 0)) | doom-modeline-invalidate-huds | doom-modeline-refresh-bars | window--adjust-process-windows |
 
+* ledger mode
+#+begin_src emacs-lisp
+  (use-package ledger-mode :ensure t)
+#+end_src
+
+#+RESULTS:
