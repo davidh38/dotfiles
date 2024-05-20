@@ -1,3 +1,4 @@
+
 ;; This is an operating system configuration generated
 ;; by the graphical installer.
 ;;
@@ -37,9 +38,7 @@
                           (specification->package "dmenu")
                           (specification->package "st")
                           (specification->package "sakura")
-                          (specification->package "nss-certs")
                           (specification->package "icecat")
-                          (specification->package "nss-certs")
                           (specification->package "vim")
                           (specification->package "keepassxc")
                           (specification->package "git")
@@ -60,28 +59,29 @@
 
   ;; Below is the list of system services.  To search for available
   ;; services, run 'guix system search KEYWORD' in a terminal.
+  ;; use 'sudo blkid' and search TYPE swap
   (services
-   (service nix-service-type)
-   %desktop-services)
+  %desktop-services)
   (bootloader (bootloader-configuration
                 (bootloader grub-efi-bootloader)
                 (targets (list "/boot/efi"))
                 (keyboard-layout keyboard-layout)))
   (swap-devices (list (swap-space
                         (target (uuid
-                                 "66475178-98b8-4150-8d4c-081975376673")))))
-
+                                 "1c9df0b1-a65f-4578-9123-54d1d469cfb9")))))
+				 
   ;; The list of file systems that get "mounted".  The unique
   ;; file system identifiers there ("UUIDs") can be obtained
-  ;; by running 'blkid' in a terminal.
-  (file-systems (cons* (file-system
-                         (mount-point "/boot/efi")
-                         (device (uuid "9C59-D9E8"
-                                       'fat32))
-                         (type "vfat"))
-                       (file-system
-                         (mount-point "/")
-                         (device (uuid
-                                  "3ea92a00-0f23-49cd-8088-9c39b17f6e9d"
-                                  'ext4))
-                         (type "ext4")) %base-file-systems)))
+  ;; by running 'sudo blkid' in a terminal.
+ (file-systems (cons* (file-system
+                       (mount-point "/boot/efi")
+                       (device (uuid "9C59-D9E8"
+                                    'fat32))
+                    (type "vfat"))
+                  (file-system
+                  (mount-point "/")
+                  (device (uuid
+                          "8b2817ac-a4a1-47ff-bfec-0aa5b1c82728"
+                         'ext4))
+				                      (type "ext4")) %base-file-systems))
+  )
